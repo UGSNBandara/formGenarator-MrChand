@@ -85,21 +85,32 @@
       <h2 class="section-title">Your Domains</h2>
       
       <div class="domains-grid">
-        <app-modern-card 
+        <div 
           *ngFor="let domain of domains" 
+          class="domain-card"
+          [style.--card-theme]="getDomainThemeColor(domain.slug)"
+          [style.--card-accent]="getDomainAccentColor(domain.slug)"
           (click)="navigateToDomain(domain.slug)"
-          theme="light"
-          class="clickable-card"
         >
-          <div class="domain-card-content">
-            <h3 class="domain-name">{{ domain.name }}</h3>
-            <div class="domain-badge">{{ domain.slug }}</div>
+          <div class="domain-card-accent"></div>
+          <div class="domain-card-body">
+            <div class="domain-card-top">
+              <div class="domain-card-initial" [style.background]="getDomainThemeColor(domain.slug)">
+                {{ getInitial(domain.name) }}
+              </div>
+              <div class="domain-card-info">
+                <h3 class="domain-name">{{ domain.name }}</h3>
+                <span class="domain-badge">{{ domain.slug }}</span>
+              </div>
+              <span class="domain-card-arrow">→</span>
+            </div>
             <p class="domain-description" *ngIf="domain.description">{{ domain.description }}</p>
             <div class="domain-industry" *ngIf="domain.industry">
-              <span class="industry-dot"></span> {{ domain.industry }}
+              <span class="industry-dot" [style.background]="getDomainAccentColor(domain.slug)"></span>
+              {{ domain.industry }}
             </div>
           </div>
-        </app-modern-card>
+        </div>
       </div>
     </div>
 

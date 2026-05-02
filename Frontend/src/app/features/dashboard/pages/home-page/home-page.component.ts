@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DomainService } from '../../../../core/services/domain.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { HeroSectionComponent } from '../../../../shared/components/hero-section/hero-section.component';
 import { ModernButtonComponent } from '../../../../shared/components/modern-button/modern-button.component';
 import { ModernCardComponent } from '../../../../shared/components/modern-card/modern-card.component';
@@ -30,7 +31,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   constructor(
     private authService: AuthService,
     private domainService: DomainService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
   ) {
     this._authService = authService;
   }
@@ -94,5 +96,17 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   get displayName(): string | undefined {
     return this._authService.getContext()?.username || this._authService.getContext()?.email;
+  }
+
+  getDomainThemeColor(slug: string): string {
+    return this.themeService.getDomainTheme(slug).primary;
+  }
+
+  getDomainAccentColor(slug: string): string {
+    return this.themeService.getDomainTheme(slug).accent;
+  }
+
+  getInitial(name: string): string {
+    return (name || '?').charAt(0).toUpperCase();
   }
 }
