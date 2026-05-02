@@ -24,7 +24,7 @@
 
 .meta-text {
   font-size: 0.8rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted, var(--text-secondary));
   white-space: nowrap;
 }
 

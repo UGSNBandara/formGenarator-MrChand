@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-workflow-explainer',
@@ -33,14 +34,18 @@ export class WorkflowExplainerComponent implements OnInit {
   }
 }`;
 
+  themeColor = '#1a1a2e';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
     this.domainSlug = this.route.snapshot.params['slug'];
     this.appSlug = this.route.snapshot.params['appSlug'];
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
   }
 
   goBackToBuilder(): void {

@@ -1,3 +1,6 @@
+:host { display: block; min-height: 100vh; background: var(--bg-surface); }
+.fade-in { animation: fadeIn 320ms ease-out both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .du-shell {
   padding: 1.25rem;
 }
@@ -12,19 +15,19 @@
 
 .du-head h2 {
   margin: 0;
-  color: #0f172a;
+  color: var(--text-heading);
 }
 
 .du-head p {
   margin: 0.25rem 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .du-btn {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #fff;
-  color: #0f172a;
+  color: var(--text-heading);
   padding: 0.35rem 0.7rem;
   font-size: 0.82rem;
   font-weight: 600;
@@ -37,8 +40,8 @@
 }
 
 .du-btn-primary {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: var(--text-heading);
+  border-color: var(--text-heading);
   color: #fff;
 }
 
@@ -106,7 +109,7 @@
 }
 
 .du-muted {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.75rem;
 }
 
@@ -173,7 +176,7 @@
 
 .du-group-card-head small,
 .du-unassigned-head small {
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .du-group-actions {
@@ -206,7 +209,7 @@
 .du-dropzone {
   border: 1px dashed #cbd5e1;
   border-radius: 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   text-align: center;
   padding: 0.85rem;
   font-size: 0.8rem;
@@ -220,18 +223,18 @@
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
-  background: #f8fafc;
+  background: var(--bg-surface);
   cursor: move;
 }
 
 .du-user-card strong {
   display: block;
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--text-heading);
 }
 
 .du-user-card small {
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .du-unassigned {

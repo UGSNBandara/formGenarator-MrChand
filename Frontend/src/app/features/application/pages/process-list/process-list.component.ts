@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProcessService } from '../../../../core/services/process.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { ProcessDefinition, ProcessDefinitionResponse, STATUS_BADGE_CLASS } from '../../../../core/models/process.model';
 
 @Component({
@@ -25,11 +26,15 @@ export class ProcessListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private processService: ProcessService,
+    private themeService: ThemeService,
   ) {}
+
+  themeColor = '#1a1a2e';
 
   ngOnInit(): void {
     this.domainSlug = this.route.snapshot.params['slug'];
     this.appSlug = this.route.snapshot.params['appSlug'];
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
     this.loadWorkflows();
   }
 

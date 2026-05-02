@@ -1,22 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap');
 
 :root {
+  /* ── Core palette ── */
   --bg-dark: #000000;
   --bg-light: #FFFFFF;
   --bg-offwhite: #F5F5F7;
+  --bg-surface: #f8fafc;
   --accent-neon: #BAFF29;
+
+  /* ── Theme layer (overridden per-page via Angular style binding) ── */
+  --theme-primary: #1a1a2e;
+  --theme-accent: #baff29;
+
+  /* ── Text ── */
   --text-dark: #111111;
+  --text-heading: #0f172a;
   --text-light: #FFFFFF;
+  --text-body: #1e293b;
   --text-muted: #666666;
   --text-muted-light: #A1A1AA;
-  
+  --text-secondary: #64748b;
+  --text-placeholder: #94a3b8;
+
+  /* ── Borders ── */
+  --border-light: rgba(0,0,0,0.07);
+  --border-medium: rgba(0,0,0,0.12);
+  --border-input: rgba(0,0,0,0.1);
+
+  /* ── Radius ── */
   --radius-card: 32px;
+  --radius-card-sm: 16px;
+  --radius-card-xs: 14px;
   --radius-btn: 8px;
-  --radius-input: 8px;
-  
+  --radius-btn-pill: 50rem;
+  --radius-input: 10px;
+
+  /* ── Transitions ── */
   --transition-fast: 0.2s ease;
-  
+  --transition-normal: 150ms ease;
+
+  /* ── Shadows ── */
   --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.07);
+  --shadow-elevated: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+  /* ── Status colors ── */
+  --color-error: #ef4444;
+  --color-error-bg: rgba(239, 68, 68, 0.08);
+  --color-error-border: rgba(239, 68, 68, 0.18);
+  --color-error-text: #dc2626;
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.08);
+  --color-success-border: rgba(16, 185, 129, 0.18);
+  --color-success-text: #059669;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-warning-text: #b45309;
 }
 
 body {
@@ -57,18 +96,4 @@ a:hover {
 .form-group {
     margin-bottom: 5px;
     margin-top: 5px;
-}
-
-.card {
-    margin-top: 10px;
-}
-
-.template-card {
-    padding: 10px;
-    background-color: blue; /* Consider removing this later */
-    color: aqua;
-    margin: 10px;
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
 }

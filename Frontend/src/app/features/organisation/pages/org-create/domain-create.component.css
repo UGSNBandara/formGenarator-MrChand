@@ -103,7 +103,7 @@
 
 /* ── Right panel ────────────────────────────────────────────────────────────── */
 .dc-right {
-  background: #f8fafc;
+  background: var(--bg-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,7 +114,7 @@
   width: 100%;
   max-width: 440px;
   background: white;
-  border: 1px solid rgba(0,0,0,0.07);
+  border: 1px solid var(--border-light);
   border-radius: 20px;
   padding: 2.5rem;
   box-shadow: 0 8px 32px rgba(0,0,0,0.06);
@@ -124,13 +124,13 @@
   font-family: 'Outfit', sans-serif;
   font-size: 1.6rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-heading);
   margin: 0 0 0.35rem;
   letter-spacing: -0.02em;
 }
 .dc-form-sub {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0 0 2rem;
 }
 
@@ -145,16 +145,16 @@
 .dc-label {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #374151;
+  color: var(--text-heading);
   display: flex;
   align-items: center;
   gap: 0.35rem;
 }
 .dc-req { color: #ef4444; }
-.dc-label-hint { font-weight: 400; color: #94a3b8; font-size: 0.78rem; }
+.dc-label-hint { font-weight: 400; color: var(--text-placeholder); font-size: 0.78rem; }
 .dc-label-optional {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--text-placeholder);
   font-size: 0.75rem;
   background: rgba(0,0,0,0.04);
   padding: 0.05rem 0.4rem;
@@ -164,21 +164,21 @@
 .dc-input {
   width: 100%;
   padding: 0.6rem 0.9rem;
-  border: 1.5px solid rgba(0,0,0,0.1);
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   font-size: 0.9rem;
-  background: #f8fafc;
+  background: var(--bg-surface);
   outline: none;
   transition: all 150ms;
   box-sizing: border-box;
-  color: #0f172a;
+  color: var(--text-heading);
 }
 .dc-input:focus {
   border-color: #1a1a2e;
   background: white;
   box-shadow: 0 0 0 3px rgba(26,26,46,0.06);
 }
-.dc-input::placeholder { color: #94a3b8; }
+.dc-input::placeholder { color: var(--text-placeholder); }
 
 .dc-textarea { resize: vertical; min-height: 80px; }
 
@@ -186,11 +186,11 @@
 .dc-slug-row {
   display: flex;
   align-items: center;
-  border: 1.5px solid rgba(0,0,0,0.1);
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   overflow: hidden;
   transition: border-color 150ms;
-  background: #f8fafc;
+  background: var(--bg-surface);
 }
 .dc-slug-row:focus-within {
   border-color: #1a1a2e;
@@ -201,7 +201,7 @@
 .dc-slug-prefix {
   padding: 0.6rem 0.75rem;
   background: rgba(0,0,0,0.04);
-  color: #94a3b8;
+  color: var(--text-placeholder);
   font-size: 0.82rem;
   font-family: monospace;
   border-right: 1.5px solid rgba(0,0,0,0.08);
@@ -270,6 +270,6 @@
 .dc-footer-note {
   text-align: center;
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: var(--text-placeholder);
   margin: 1rem 0 0;
 }

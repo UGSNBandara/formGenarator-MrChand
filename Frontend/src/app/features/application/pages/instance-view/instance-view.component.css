@@ -1,5 +1,5 @@
 /* ── Shell ───────────────────────────────────────────────────────────────────── */
-:host { display: block; min-height: 100vh; background: #f8fafc; }
+:host { display: block; min-height: 100vh; background: var(--bg-surface); }
 .iv-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .fade-in { animation: fadeIn 300ms ease-out both; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -10,7 +10,7 @@
   align-items: center;
   padding: 0.7rem 2rem;
   background: white;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid var(--border-light);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -19,8 +19,8 @@
 
 .iv-nav-back {
   background: transparent;
-  border: 1px solid rgba(0,0,0,0.1);
-  color: #374151;
+  border: 1px solid var(--border-input);
+  color: var(--text-heading);
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.4rem 1rem;
@@ -28,7 +28,7 @@
   cursor: pointer;
   transition: all 150ms;
 }
-.iv-nav-back:hover { background: var(--tc, #1a1a2e); color: white; border-color: var(--tc, #1a1a2e); }
+.iv-nav-back:hover { background: var(--theme-primary, #1a1a2e); color: white; border-color: var(--theme-primary, #1a1a2e); }
 
 .iv-cancel-btn {
   background: transparent;
@@ -47,12 +47,12 @@
 .iv-loading {
   display: flex; align-items: center; gap: 0.75rem;
   justify-content: center; padding: 4rem;
-  color: #64748b; font-size: 0.9rem;
+  color: var(--text-secondary); font-size: 0.9rem;
 }
 .iv-spinner {
   width: 20px; height: 20px;
-  border: 2.5px solid rgba(0,0,0,0.1);
-  border-top-color: var(--tc, #1a1a2e);
+  border: 2.5px solid var(--border-input);
+  border-top-color: var(--theme-primary, #1a1a2e);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -88,7 +88,7 @@
 .iv-step-header {
   display: flex; align-items: center; gap: 1rem;
   padding: 1.1rem 1.4rem;
-  background: var(--tc, #1a1a2e);
+  background: var(--theme-primary, #1a1a2e);
   border-radius: 16px;
   color: white;
 }
@@ -118,7 +118,7 @@
 /* ── Card ────────────────────────────────────────────────────────────────────── */
 .iv-card {
   background: white;
-  border: 1.5px solid rgba(0,0,0,0.07);
+  border: 1.5px solid var(--border-light);
   border-radius: 16px;
   padding: 1.75rem;
   display: flex; flex-direction: column; gap: 1.25rem;
@@ -129,37 +129,37 @@
 .iv-field { display: flex; flex-direction: column; gap: 0.4rem; }
 
 .iv-label {
-  font-size: 0.82rem; font-weight: 700; color: #374151;
+  font-size: 0.82rem; font-weight: 700; color: var(--text-heading);
   display: flex; align-items: center; gap: 0.3rem;
 }
 .iv-req { color: #ef4444; }
-.iv-optional { font-weight: 400; color: #94a3b8; }
+.iv-optional { font-weight: 400; color: var(--text-placeholder); }
 
 .iv-input {
   width: 100%; padding: 0.65rem 0.9rem;
-  border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px;
-  font-size: 0.9rem; background: #f8fafc; outline: none;
+  border: 1.5px solid var(--border-input); border-radius: 10px;
+  font-size: 0.9rem; background: var(--bg-surface); outline: none;
   transition: all 150ms; box-sizing: border-box;
-  color: #0f172a; font-family: inherit;
+  color: var(--text-heading); font-family: inherit;
 }
 .iv-input:focus {
-  border-color: var(--tc, #1a1a2e); background: white;
+  border-color: var(--theme-primary, #1a1a2e); background: white;
   box-shadow: 0 0 0 3px rgba(26,26,46,0.06);
 }
-.iv-input::placeholder { color: #94a3b8; }
+.iv-input::placeholder { color: var(--text-placeholder); }
 .iv-textarea { resize: vertical; min-height: 80px; }
 .iv-select { cursor: pointer; }
 
 .iv-radio-group { display: flex; flex-direction: column; gap: 0.5rem; }
-.iv-radio-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: #1e293b; }
-.iv-checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: #1e293b; }
-.iv-label-text { font-size: 0.9rem; color: #64748b; margin: 0; font-style: italic; }
+.iv-radio-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text-body); }
+.iv-checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text-body); }
+.iv-label-text { font-size: 0.9rem; color: var(--text-secondary); margin: 0; font-style: italic; }
 
 /* ── Submit button ───────────────────────────────────────────────────────────── */
 .iv-form-actions { display: flex; justify-content: flex-end; padding-top: 0.25rem; }
 
 .iv-submit-btn {
-  background: var(--tc, #1a1a2e); color: white; border: none;
+  background: var(--theme-primary, #1a1a2e); color: white; border: none;
   padding: 0.75rem 2rem; border-radius: 10px;
   font-size: 0.95rem; font-weight: 700; cursor: pointer;
   transition: all 180ms;
@@ -174,26 +174,26 @@
 
 /* ── Approval ────────────────────────────────────────────────────────────────── */
 .iv-data-summary {
-  background: #f8fafc; border: 1px solid rgba(0,0,0,0.06);
+  background: var(--bg-surface); border: 1px solid var(--border-light);
   border-radius: 10px; padding: 1rem;
 }
 .iv-summary-title {
   font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; color: #94a3b8; margin: 0 0 0.75rem;
+  letter-spacing: 0.07em; color: var(--text-placeholder); margin: 0 0 0.75rem;
 }
 .iv-data-row {
   display: flex; gap: 1rem; padding: 0.35rem 0;
   border-bottom: 1px solid rgba(0,0,0,0.04);
 }
 .iv-data-row:last-child { border-bottom: none; }
-.iv-data-key { font-family: monospace; font-size: 0.78rem; color: #94a3b8; min-width: 130px; flex-shrink: 0; }
-.iv-data-val { font-size: 0.9rem; color: #1e293b; word-break: break-word; }
+.iv-data-key { font-family: monospace; font-size: 0.78rem; color: var(--text-placeholder); min-width: 130px; flex-shrink: 0; }
+.iv-data-val { font-size: 0.9rem; color: var(--text-body); word-break: break-word; }
 
 .iv-action-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .iv-action-btn {
   flex: 1; min-width: 110px;
   padding: 0.75rem 1rem; border-radius: 10px;
-  border: 2px solid rgba(0,0,0,0.1); background: white;
+  border: 2px solid var(--border-input); background: white;
   cursor: pointer; font-size: 0.95rem; font-weight: 700;
   transition: all 180ms;
   display: flex; align-items: center; justify-content: center; gap: 0.4rem;
@@ -205,32 +205,32 @@
 .iv-action-btn.action-reject:hover { border-color: #dc2626; background: rgba(239,68,68,0.06); }
 .iv-action-btn.action-reject.selected { background: #dc2626; border-color: #dc2626; color: white; }
 .iv-action-btn:not(.action-approve):not(.action-reject).selected {
-  background: var(--tc, #1a1a2e); border-color: var(--tc, #1a1a2e); color: white;
+  background: var(--theme-primary, #1a1a2e); border-color: var(--theme-primary, #1a1a2e); color: white;
 }
 
 /* ── Data table ──────────────────────────────────────────────────────────────── */
-.iv-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid rgba(0,0,0,0.07); }
+.iv-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-light); }
 .iv-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .iv-table th {
   text-align: left; padding: 0.6rem 1rem;
-  background: #f8fafc; font-size: 0.72rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  background: var(--bg-surface); font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
 }
-.iv-table td { padding: 0.65rem 1rem; color: #1e293b; border-bottom: 1px solid rgba(0,0,0,0.04); }
+.iv-table td { padding: 0.65rem 1rem; color: var(--text-body); border-bottom: 1px solid rgba(0,0,0,0.04); }
 .iv-table tr:last-child td { border-bottom: none; }
-.iv-table tr:hover td { background: #f8fafc; }
+.iv-table tr:hover td { background: var(--bg-surface); }
 .iv-record-count {
-  font-size: 0.72rem; color: #94a3b8; text-align: right;
+  font-size: 0.72rem; color: var(--text-placeholder); text-align: right;
   padding: 0.5rem 1rem; border-top: 1px solid rgba(0,0,0,0.05);
   margin: 0; background: white;
 }
-.iv-empty-text { font-size: 0.875rem; color: #64748b; text-align: center; padding: 1rem 0; margin: 0; }
+.iv-empty-text { font-size: 0.875rem; color: var(--text-secondary); text-align: center; padding: 1rem 0; margin: 0; }
 
 /* ── Terminal state ──────────────────────────────────────────────────────────── */
 .iv-terminal-card {
   background: white;
-  border: 1.5px solid rgba(0,0,0,0.07);
+  border: 1.5px solid var(--border-light);
   border-radius: 16px;
   padding: 3.5rem 2rem;
   display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
@@ -251,13 +251,13 @@
   font-size: 1.6rem; font-weight: 900; margin: 0; letter-spacing: -0.02em;
 }
 .iv-done   { color: #15803d; }
-.iv-cancel { color: #64748b; }
+.iv-cancel { color: var(--text-secondary); }
 .iv-paused { color: #b45309; }
-.iv-terminal-sub { font-size: 0.9rem; color: #64748b; margin: 0.25rem 0 0; }
+.iv-terminal-sub { font-size: 0.9rem; color: var(--text-secondary); margin: 0.25rem 0 0; }
 
 .iv-home-btn {
   margin-top: 1.5rem;
-  background: var(--tc, #1a1a2e); color: white; border: none;
+  background: var(--theme-primary, #1a1a2e); color: white; border: none;
   padding: 0.7rem 2rem; border-radius: 50rem;
   font-size: 0.95rem; font-weight: 700; cursor: pointer;
   transition: opacity 150ms;

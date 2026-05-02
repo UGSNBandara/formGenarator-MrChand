@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, NgZ
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomainService } from '../../../../core/services/domain.service';
 import { ProcessService } from '../../../../core/services/process.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import {
   DomainModelField,
   DomainFieldType,
@@ -58,6 +59,8 @@ export class ProcessBuilderComponent implements OnInit, AfterViewInit, OnDestroy
   successMsg = '';
   publishErrors: string[] = [];
 
+  themeColor = '#1a1a2e';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -65,12 +68,14 @@ export class ProcessBuilderComponent implements OnInit, AfterViewInit, OnDestroy
     private domainService: DomainService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
+    private themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
     this.domainSlug = this.route.snapshot.params['slug'];
     this.appSlug = this.route.snapshot.params['appSlug'];
     this.workflowSlug = this.route.snapshot.queryParamMap.get('wf') || '';
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
     this.loadRoles();
     if (this.workflowSlug) {
       this.loadWorkflow(this.workflowSlug);

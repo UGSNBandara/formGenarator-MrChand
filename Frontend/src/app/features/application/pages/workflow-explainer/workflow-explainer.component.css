@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(180deg, var(--bg-surface) 0%, #e2e8f0 100%);
 }
 
 .fade-in {
@@ -30,13 +30,13 @@
 
 .we-header h1 {
   margin: 0;
-  color: #0f172a;
+  color: var(--text-heading);
   font-size: 1.4rem;
 }
 
 .we-header p {
   margin: 0.2rem 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .we-back {
@@ -59,7 +59,7 @@
 
 .we-card h2 {
   margin: 0 0 0.8rem;
-  color: #0f172a;
+  color: var(--text-heading);
 }
 
 .we-grid {
@@ -72,13 +72,13 @@
   border: 1px dashed rgba(15, 23, 42, 0.18);
   border-radius: 12px;
   padding: 0.75rem;
-  background: #f8fafc;
+  background: var(--bg-surface);
 }
 
 .we-grid h3,
 .we-runtime-item h3 {
   margin: 0 0 0.35rem;
-  color: #1e293b;
+  color: var(--text-body);
   font-size: 0.95rem;
 }
 
@@ -103,8 +103,8 @@
   border-radius: 12px;
   padding: 0.55rem 0.8rem;
   border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--bg-surface);
+  color: var(--text-heading);
   font-weight: 700;
 }
 
@@ -115,13 +115,13 @@
 }
 
 .we-arrow {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 700;
 }
 
 .we-note {
   margin: 0.8rem 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.84rem;
 }
 
@@ -132,7 +132,7 @@
 }
 
 .we-runtime-item {
-  background: #f8fafc;
+  background: var(--bg-surface);
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 12px;
   padding: 0.75rem;
