@@ -12,8 +12,8 @@ import { AuthGuard } from '../../core/guards/auth.guard';
 const routes: Routes = [
     { path: 'create', component: DomainCreateComponent, canActivate: [AuthGuard], data: { principalTypes: ['OWNER'] } },
     { path: ':slug', component: DomainHomeComponent },
-    { path: ':slug/users', component: DomainUsersComponent },
-    { path: ':slug/workflow-roles', component: DomainWorkflowRolesComponent },
+    { path: ':slug/users', component: DomainUsersComponent, canActivate: [AuthGuard], data: { principalTypes: ['OWNER', 'DOMAIN_USER'] } },
+    { path: ':slug/workflow-roles', component: DomainWorkflowRolesComponent, canActivate: [AuthGuard], data: { principalTypes: ['OWNER', 'DOMAIN_USER'] } },
 ];
 
 @NgModule({
