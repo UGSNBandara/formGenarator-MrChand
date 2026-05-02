@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -9,8 +9,6 @@ import { ModernButtonComponent } from '../../../../shared/components/modern-butt
 import { ModernCardComponent } from '../../../../shared/components/modern-card/modern-card.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
-declare var lucide: any;
-
 @Component({
   selector: 'home-page',
   standalone: true,
@@ -19,7 +17,7 @@ declare var lucide: any;
   styleUrls: ['./home-page.component.css']
 })
 
-export class HomePageComponent implements OnInit, AfterViewInit {
+export class HomePageComponent implements OnInit {
   _authService: AuthService;
   domains: any[] = [];
   loadingDomains = false;
@@ -50,12 +48,6 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     this._authService.logout();
     this.ownerContext = false;
     this.notice = 'AdaptiveBP owner portal is restricted to owners. Please login as an owner.';
-  }
-
-  ngAfterViewInit(): void {
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
   }
 
   requestLogout(): void {

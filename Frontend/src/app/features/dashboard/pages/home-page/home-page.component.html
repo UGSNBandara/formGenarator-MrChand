@@ -1,16 +1,16 @@
 <div class="home-container fade-in">
   
   <app-hero-section
-    [title]="'AdaptiveBP'"
-    [subtitle]="ownerContext ? 'Welcome ' + displayName : 'The Modern Platform for Adaptive Business Processes.'"
-    alignment="left"
+    [title]="ownerContext ? 'Welcome back.' : 'Build workflows.<br>Not workarounds.'"
+    [subtitle]="ownerContext ? 'Manage your domains and applications.' : 'AdaptiveBP is the modern platform for adaptive business processes — design, deploy, and manage workflows at any scale.'"
+    [alignment]="ownerContext ? 'left' : 'center'"
   >
     <p class="notice" *ngIf="notice">{{ notice }}</p>
 
     <ng-container *ngIf="!ownerContext; else ownerActions">
       <div class="hero-actions">
         <a routerLink="/owner-login">
-          <app-modern-button variant="primary" size="lg">Owner Login</app-modern-button>
+          <app-modern-button variant="primary" size="lg">Get Started</app-modern-button>
         </a>
         <a routerLink="/owner-signup">
           <app-modern-button variant="outline-light" size="lg">Create Workspace</app-modern-button>
@@ -21,9 +21,9 @@
     <ng-template #ownerActions>
       <div class="hero-actions">
         <a routerLink="/create-domain">
-          <app-modern-button variant="primary" size="lg">Create Domain</app-modern-button>
+          <app-modern-button variant="primary" size="lg">New Domain</app-modern-button>
         </a>
-        <app-modern-button variant="outline-light" size="lg" (click)="requestLogout()">Logout</app-modern-button>
+        <app-modern-button variant="outline-light" size="lg" (click)="requestLogout()">Sign Out</app-modern-button>
       </div>
     </ng-template>
   </app-hero-section>
@@ -31,10 +31,10 @@
   <app-confirm-dialog
     *ngIf="showLogoutConfirm"
     theme="dark"
-    title="Logout"
-    message="Are you sure you want to logout?"
+    title="Sign Out"
+    message="Are you sure you want to sign out?"
     confirmText="Yes"
-    cancelText="No"
+    cancelText="Cancel"
     confirmVariant="primary"
     cancelVariant="outline-light"
     (confirm)="confirmLogout()"
@@ -42,47 +42,105 @@
   />
 
   <div class="content-section">
-    <!-- Landing Page Content for non-owners -->
+    <!-- Landing Page for non-owners -->
     <div *ngIf="!ownerContext" class="landing-content">
-      <section class="features-section">
-        <h2 class="section-title text-center">Built for Scale and Speed</h2>
-        <div class="features-grid">
-          <app-modern-card theme="light">
-            <div class="feature-icon mb-3"><i data-lucide="rocket" width="48" height="48" stroke-width="1.5"></i></div>
-            <h3 class="feature-title">Rapid Deployment</h3>
-            <p class="feature-desc text-muted">Spin up new domains and applications in minutes. Our infrastructure handles the heavy lifting.</p>
-          </app-modern-card>
 
-          <app-modern-card theme="light">
-            <div class="feature-icon mb-3"><i data-lucide="shield-check" width="48" height="48" stroke-width="1.5"></i></div>
-            <h3 class="feature-title">Enterprise Security</h3>
-            <p class="feature-desc text-muted">Role-based access control out of the box. Secure your data with industry-leading encryption.</p>
-          </app-modern-card>
+      <!-- Capabilities overview -->
+      <section class="capabilities-section">
+        <div class="section-eyebrow">Platform</div>
+        <h2 class="section-heading">Everything you need.<br>Nothing you don't.</h2>
+        <p class="section-description">Build complex business workflows with a visual editor, manage data models, and control access — all from one unified platform.</p>
 
-          <app-modern-card theme="light">
-            <div class="feature-icon mb-3"><i data-lucide="zap" width="48" height="48" stroke-width="1.5" class="neon-icon"></i></div>
-            <h3 class="feature-title">Dynamic Forms</h3>
-            <p class="feature-desc text-muted">Create complex data schemas and UI forms without writing a single line of frontend code.</p>
-          </app-modern-card>
+        <div class="capabilities-grid">
+          <div class="capability-card">
+            <div class="capability-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+            </div>
+            <h3 class="capability-title">Visual Workflow Builder</h3>
+            <p class="capability-desc">Design step-by-step processes with a drag-and-configure editor. Define fields, roles, and transitions visually.</p>
+          </div>
+
+          <div class="capability-card">
+            <div class="capability-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+            </div>
+            <h3 class="capability-title">Domain Architecture</h3>
+            <p class="capability-desc">Organise your business into isolated domains, each with its own applications, users, and data schemas.</p>
+          </div>
+
+          <div class="capability-card">
+            <div class="capability-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 class="capability-title">Role-Based Access</h3>
+            <p class="capability-desc">Fine-grained permissions at every level. Control who can view, execute, or administer each workflow step.</p>
+          </div>
+
+          <div class="capability-card">
+            <div class="capability-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <h3 class="capability-title">Dynamic Data Models</h3>
+            <p class="capability-desc">Create structured schemas with typed fields. Share models across applications or keep them scoped.</p>
+          </div>
         </div>
       </section>
 
-      <section class="cta-section">
-        <app-modern-card theme="dark" class="text-center">
-          <div class="cta-wrapper">
-            <h2 class="cta-title">Ready to transform your business?</h2>
-            <p class="cta-subtitle">Join thousands of organizations building on AdaptiveBP.</p>
-            <a routerLink="/owner-signup">
-              <app-modern-button variant="primary" size="lg">Start Building Free</app-modern-button>
-            </a>
+      <!-- How it works -->
+      <section class="how-section">
+        <div class="section-eyebrow">How it works</div>
+        <h2 class="section-heading">Three steps to production.</h2>
+
+        <div class="steps-grid">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Create a Domain</h3>
+            <p class="step-desc">Set up your organizational boundary — name it, configure its industry, and invite your team.</p>
           </div>
-        </app-modern-card>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Build a Workflow</h3>
+            <p class="step-desc">Use the visual builder to define steps, fields, transitions, and role-based permissions.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Publish and Run</h3>
+            <p class="step-desc">Validate and publish. Your team can start executing workflows immediately — no code required.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <div class="cta-card">
+          <h2 class="cta-title">Ready to streamline<br>your processes?</h2>
+          <p class="cta-subtitle">Start building today. No credit card required.</p>
+          <a routerLink="/owner-signup">
+            <app-modern-button variant="primary" size="lg">Start Building Free</app-modern-button>
+          </a>
+        </div>
       </section>
     </div>
 
-    <!-- Owner Dashboard Content (unchanged structure, just CSS context) -->
+    <!-- Owner Dashboard — Domains -->
     <div *ngIf="ownerContext && !loadingDomains && domains.length > 0" class="domains-section">
-      <h2 class="section-title">Your Domains</h2>
+      <div class="section-eyebrow">Dashboard</div>
+      <h2 class="section-heading">Your Domains</h2>
       
       <div class="domains-grid">
         <div 
@@ -114,11 +172,20 @@
       </div>
     </div>
 
-    <div *ngIf="ownerContext && loadingDomains" class="loading-section">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
+    <!-- Empty state for logged-in owners with no domains -->
+    <div *ngIf="ownerContext && !loadingDomains && domains.length === 0" class="empty-state">
+      <div class="empty-state-inner">
+        <h2 class="section-heading">No domains yet</h2>
+        <p class="section-description">Create your first domain to get started with AdaptiveBP.</p>
+        <a routerLink="/create-domain">
+          <app-modern-button variant="primary" size="lg">Create Your First Domain</app-modern-button>
+        </a>
       </div>
-      <p class="mt-3 text-muted">Loading your domains...</p>
+    </div>
+
+    <div *ngIf="ownerContext && loadingDomains" class="loading-section">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading your domains…</p>
     </div>
   </div>
 

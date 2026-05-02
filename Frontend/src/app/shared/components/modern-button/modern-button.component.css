@@ -2,66 +2,63 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
   text-align: center;
   white-space: nowrap;
-  vertical-align: middle;
   user-select: none;
-  border: 2px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: var(--radius-btn);
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
   cursor: pointer;
-  line-height: 1.5;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
-.modern-btn:focus {
+.modern-btn:focus-visible {
   outline: 0;
-  box-shadow: 0 0 0 4px rgba(186, 255, 41, 0.3); /* Neon outline on focus */
+  box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.3);
 }
 
 .modern-btn.disabled,
 .modern-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.42;
   cursor: not-allowed;
   pointer-events: none;
 }
 
 /* --- Sizes --- */
 .btn-sm {
-  padding: 0.375rem 1rem;
-  font-size: 0.75rem;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.8rem;
 }
 
 .btn-md {
-  padding: 0.625rem 1.5rem;
-  font-size: 0.875rem;
+  padding: 0.6rem 1.6rem;
+  font-size: 0.9rem;
 }
 
 .btn-lg {
-  padding: 0.875rem 2rem;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
 }
 
 /* --- Variants --- */
 
-/* Primary: Neon Green background, Dark text */
+/* Primary: brand accent */
 .btn-primary {
   background-color: var(--accent-neon);
-  color: var(--bg-dark);
+  color: #000;
   border-color: var(--accent-neon);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: transparent;
-  color: var(--accent-neon);
-  border-color: var(--accent-neon);
-  transform: translateY(0);
+  background-color: #c8ff52;
+  border-color: #c8ff52;
+  transform: scale(1.03);
 }
 
-/* Secondary: Dark background, White text */
+/* Secondary: Dark solid */
 .btn-secondary {
   background-color: var(--bg-dark);
   color: var(--text-light);
@@ -69,44 +66,43 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: transparent;
-  color: var(--bg-dark);
-  border-color: var(--bg-dark);
-  transform: translateY(0);
+  background-color: #1D1D1F;
+  transform: scale(1.03);
 }
 
-/* Outline: Transparent background, Dark border, Dark text */
+/* Outline: transparent with dark border */
 .btn-outline {
   background-color: transparent;
   color: var(--text-dark);
-  border-color: var(--text-dark);
+  border-color: rgba(0,0,0,0.2);
 }
 
 .btn-outline:hover:not(:disabled) {
-  background-color: var(--bg-dark);
+  background-color: var(--text-dark);
   color: var(--text-light);
+  border-color: var(--text-dark);
 }
 
-/* Outline Light: Transparent background, White border, White text (for dark backgrounds) */
+/* Outline Light: for dark backgrounds */
 .btn-outline-light {
   background-color: transparent;
   color: var(--text-light);
-  border-color: var(--text-light);
+  border-color: rgba(255,255,255,0.35);
 }
 
 .btn-outline-light:hover:not(:disabled) {
-  background-color: var(--text-light);
-  color: var(--bg-dark);
+  background-color: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.5);
 }
 
-/* Text: No background, No border, Dark text */
+/* Text: ghost button */
 .btn-text {
   background-color: transparent;
   color: var(--text-dark);
 }
 
 .btn-text:hover:not(:disabled) {
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(0,0,0,0.04);
 }
 
 .w-100 {
