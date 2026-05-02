@@ -1,14 +1,15 @@
-<div class="home-container fade-in">
+<div class="home-container">
   
   <app-hero-section
     [title]="ownerContext ? 'Welcome back.' : 'Build workflows.<br>Not workarounds.'"
-    [subtitle]="ownerContext ? 'Manage your domains and applications.' : 'AdaptiveBP is the modern platform for adaptive business processes — design, deploy, and manage workflows at any scale.'"
+    [subtitle]="ownerContext ? 'Manage your domains, applications, and team.' : 'AdaptiveBP is the modern platform for adaptive business processes — design, deploy, and manage workflows at any scale.'"
     [alignment]="ownerContext ? 'left' : 'center'"
+    class="reveal-up"
   >
-    <p class="notice" *ngIf="notice">{{ notice }}</p>
+    <p class="notice reveal-up reveal-delay-1" *ngIf="notice">{{ notice }}</p>
 
     <ng-container *ngIf="!ownerContext; else ownerActions">
-      <div class="hero-actions">
+      <div class="hero-actions reveal-up reveal-delay-2">
         <a routerLink="/owner-login">
           <app-modern-button variant="primary" size="lg">Get Started</app-modern-button>
         </a>
@@ -19,10 +20,7 @@
     </ng-container>
 
     <ng-template #ownerActions>
-      <div class="hero-actions">
-        <a routerLink="/create-domain">
-          <app-modern-button variant="primary" size="lg">New Domain</app-modern-button>
-        </a>
+      <div class="hero-actions reveal-up reveal-delay-1">
         <app-modern-button variant="outline-light" size="lg" (click)="requestLogout()">Sign Out</app-modern-button>
       </div>
     </ng-template>
@@ -46,12 +44,12 @@
     <div *ngIf="!ownerContext" class="landing-content">
 
       <!-- Capabilities overview -->
-      <section class="capabilities-section">
+      <section class="capabilities-section reveal-up">
         <div class="section-eyebrow">Platform</div>
         <h2 class="section-heading">Everything you need.<br>Nothing you don't.</h2>
         <p class="section-description">Build complex business workflows with a visual editor, manage data models, and control access — all from one unified platform.</p>
 
-        <div class="capabilities-grid">
+        <div class="capabilities-grid reveal-up reveal-delay-1">
           <div class="capability-card">
             <div class="capability-icon">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -102,7 +100,7 @@
       </section>
 
       <!-- How it works -->
-      <section class="how-section">
+      <section class="how-section reveal-up reveal-delay-2">
         <div class="section-eyebrow">How it works</div>
         <h2 class="section-heading">Three steps to production.</h2>
 
@@ -126,7 +124,7 @@
       </section>
 
       <!-- CTA -->
-      <section class="cta-section">
+      <section class="cta-section reveal-up reveal-delay-3">
         <div class="cta-card">
           <h2 class="cta-title">Ready to streamline<br>your processes?</h2>
           <p class="cta-subtitle">Start building today. No credit card required.</p>
@@ -137,55 +135,81 @@
       </section>
     </div>
 
-    <!-- Owner Dashboard — Domains -->
-    <div *ngIf="ownerContext && !loadingDomains && domains.length > 0" class="domains-section">
-      <div class="section-eyebrow">Dashboard</div>
-      <h2 class="section-heading">Your Domains</h2>
-      
-      <div class="domains-grid">
-        <div 
-          *ngFor="let domain of domains" 
-          class="domain-card"
-          [style.--card-theme]="getDomainThemeColor(domain.slug)"
-          [style.--card-accent]="getDomainAccentColor(domain.slug)"
-          (click)="navigateToDomain(domain.slug)"
-        >
-          <div class="domain-card-accent"></div>
-          <div class="domain-card-body">
-            <div class="domain-card-top">
-              <div class="domain-card-initial" [style.background]="getDomainThemeColor(domain.slug)">
-                {{ getInitial(domain.name) }}
+    <!-- Owner Dashboard -->
+    <div *ngIf="ownerContext && !loadingDomains" class="dashboard-wrapper">
+      <div class="dashboard-header reveal-up">
+        <div class="dashboard-greeting">
+          <div class="section-eyebrow">Dashboard</div>
+          <h2 class="section-heading">Workspace Overview</h2>
+        </div>
+        <a routerLink="/create-domain" class="create-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New Domain
+        </a>
+      </div>
+
+      <div class="quick-stats reveal-up reveal-delay-1">
+        <div class="stat-card">
+          <span class="stat-value">{{ domains.length }}</span>
+          <span class="stat-label">Active Domains</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">Owner</span>
+          <span class="stat-label">Access Level</span>
+        </div>
+      </div>
+
+      <!-- Domains List -->
+      <div *ngIf="domains.length > 0" class="domains-list-section reveal-up reveal-delay-2">
+        <h3 class="section-subheading">Your Domains</h3>
+        <div class="domains-grid">
+          <div 
+            *ngFor="let domain of domains" 
+            class="domain-card"
+            [style.--card-theme]="getDomainThemeColor(domain.slug)"
+            [style.--card-accent]="getDomainAccentColor(domain.slug)"
+            (click)="navigateToDomain(domain.slug)"
+          >
+            <div class="domain-card-accent"></div>
+            <div class="domain-card-body">
+              <div class="domain-card-top">
+                <div class="domain-card-initial" [style.background]="getDomainThemeColor(domain.slug)">
+                  {{ getInitial(domain.name) }}
+                </div>
+                <div class="domain-card-info">
+                  <h3 class="domain-name">{{ domain.name }}</h3>
+                  <span class="domain-badge">{{ domain.slug }}</span>
+                </div>
+                <span class="domain-card-arrow">→</span>
               </div>
-              <div class="domain-card-info">
-                <h3 class="domain-name">{{ domain.name }}</h3>
-                <span class="domain-badge">{{ domain.slug }}</span>
+              <p class="domain-description" *ngIf="domain.description">{{ domain.description }}</p>
+              <div class="domain-industry" *ngIf="domain.industry">
+                <span class="industry-dot" [style.background]="getDomainAccentColor(domain.slug)"></span>
+                {{ domain.industry }}
               </div>
-              <span class="domain-card-arrow">→</span>
-            </div>
-            <p class="domain-description" *ngIf="domain.description">{{ domain.description }}</p>
-            <div class="domain-industry" *ngIf="domain.industry">
-              <span class="industry-dot" [style.background]="getDomainAccentColor(domain.slug)"></span>
-              {{ domain.industry }}
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Empty state for logged-in owners with no domains -->
-    <div *ngIf="ownerContext && !loadingDomains && domains.length === 0" class="empty-state">
-      <div class="empty-state-inner">
-        <h2 class="section-heading">No domains yet</h2>
-        <p class="section-description">Create your first domain to get started with AdaptiveBP.</p>
-        <a routerLink="/create-domain">
-          <app-modern-button variant="primary" size="lg">Create Your First Domain</app-modern-button>
-        </a>
+      <!-- Empty state for logged-in owners with no domains -->
+      <div *ngIf="domains.length === 0" class="empty-state reveal-up reveal-delay-2">
+        <div class="empty-state-inner">
+          <h2 class="section-heading">No domains yet</h2>
+          <p class="section-description">Create your first domain to get started with AdaptiveBP.</p>
+          <a routerLink="/create-domain">
+            <app-modern-button variant="primary" size="lg">Create Your First Domain</app-modern-button>
+          </a>
+        </div>
       </div>
     </div>
 
-    <div *ngIf="ownerContext && loadingDomains" class="loading-section">
+    <div *ngIf="ownerContext && loadingDomains" class="loading-section reveal-up">
       <div class="loading-spinner"></div>
-      <p class="loading-text">Loading your domains…</p>
+      <p class="loading-text">Loading your workspace…</p>
     </div>
   </div>
 

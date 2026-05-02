@@ -34,6 +34,27 @@
   flex-wrap: wrap;
 }
 
+/* ── Apple-style Reveal Animations ── */
+.reveal-up {
+  opacity: 0;
+  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-delay-1 { animation-delay: 0.15s; }
+.reveal-delay-2 { animation-delay: 0.3s; }
+.reveal-delay-3 { animation-delay: 0.45s; }
+
+@keyframes revealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ── Landing page ── */
 .landing-content {
   display: flex;
@@ -199,16 +220,107 @@
   line-height: 1.5;
 }
 
+/* ── Owner Dashboard Enhancements ── */
+.dashboard-wrapper {
+  padding-top: 2rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-greeting .section-heading {
+  margin-bottom: 0;
+}
+
+.create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--text-heading);
+  color: var(--text-light);
+  padding: 0.6rem 1.25rem;
+  border-radius: 980px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.create-btn:hover {
+  transform: scale(1.04);
+  box-shadow: var(--shadow-hover);
+  color: var(--text-light);
+}
+
+/* ── Quick Stats ── */
+.quick-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: var(--bg-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card-sm);
+  padding: 1.5rem 2rem;
+  min-width: 180px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: var(--shadow-subtle);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+
+.section-subheading {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
 /* ── Domains grid ── */
-.domains-section {
-  padding-top: 3rem;
+.domains-list-section {
+  padding-top: 1rem;
 }
 
 .domains-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.25rem;
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 
 /* ── Domain Card ── */
@@ -380,16 +492,6 @@
 .loading-text {
   color: var(--text-muted);
   font-size: 0.95rem;
-}
-
-/* ── Fade in ── */
-.fade-in {
-  animation: fadeIn 400ms ease-out both;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
 }
 
 /* ── Responsive ── */
