@@ -1,0 +1,53 @@
+<nav class="gn" [style.border-bottom-color]="!isHome && themeColor ? themeColor : ''">
+  <div class="gn-inner">
+    
+    <div class="gn-left">
+      <!-- Logo -->
+      <a routerLink="/" class="gn-logo-link" [style.color]="!isHome && themeColor ? themeColor : ''">
+        <svg class="gn-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 250">
+          <defs>
+            <mask id="abp-mask">
+              <rect width="100%" height="100%" fill="white" />
+              <circle cx="135" cy="125" r="20" fill="black" /> 
+              <circle cx="265" cy="115" r="20" fill="black" /> 
+              <circle cx="375" cy="115" r="20" fill="black" /> 
+              <line x1="230" y1="155" x2="295" y2="75" stroke="black" stroke-width="8" stroke-linecap="square" />
+              <polygon points="375,115 435,70 445,85" fill="black" />
+            </mask>
+          </defs>
+          <g mask="url(#abp-mask)" fill="currentColor">
+            <circle cx="140" cy="120" r="42" />
+            <rect x="160" y="78" width="22" height="84" />
+            <circle cx="260" cy="120" r="42" />
+            <rect x="218" y="35" width="22" height="127" />
+            <circle cx="380" cy="120" r="42" />
+            <rect x="338" y="78" width="22" height="127" />
+          </g>
+          <circle cx="425" cy="175" r="12" fill="currentColor" />
+          <circle cx="455" cy="205" r="7" fill="currentColor" />
+        </svg>
+      </a>
+
+      <!-- Home Wordmark -->
+      <ng-container *ngIf="isHome">
+        <span class="gn-wordmark">AdaptiveBP</span>
+      </ng-container>
+
+      <!-- Domain / App Breadcrumbs -->
+      <ng-container *ngIf="!isHome && domainSlug">
+        <span class="gn-divider">/</span>
+        <a [routerLink]="['/domain', domainSlug]" class="gn-breadcrumb" [class.active]="!appSlug" [style.color]="!appSlug && themeColor ? themeColor : ''">
+          {{ domainName || domainSlug }}
+        </a>
+        
+        <ng-container *ngIf="appSlug">
+          <span class="gn-divider">/</span>
+          <a [routerLink]="['/domain', domainSlug, 'app', appSlug]" class="gn-breadcrumb active" [style.color]="themeColor ? themeColor : ''">
+            {{ appName || appSlug }}
+          </a>
+        </ng-container>
+      </ng-container>
+    </div>
+
+  </div>
+</nav>

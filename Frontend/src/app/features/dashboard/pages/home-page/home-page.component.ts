@@ -1,14 +1,13 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DomainService } from '../../../../core/services/domain.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { HeroSectionComponent } from '../../../../shared/components/hero-section/hero-section.component';
 import { ModernButtonComponent } from '../../../../shared/components/modern-button/modern-button.component';
 import { ModernCardComponent } from '../../../../shared/components/modern-card/modern-card.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-
-declare var lucide: any;
 
 @Component({
   selector: 'home-page',
@@ -18,7 +17,7 @@ declare var lucide: any;
   styleUrls: ['./home-page.component.css']
 })
 
-export class HomePageComponent implements OnInit, AfterViewInit {
+export class HomePageComponent implements OnInit {
   _authService: AuthService;
   domains: any[] = [];
   loadingDomains = false;
@@ -30,7 +29,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   constructor(
     private authService: AuthService,
     private domainService: DomainService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
   ) {
     this._authService = authService;
   }
@@ -48,12 +48,6 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     this._authService.logout();
     this.ownerContext = false;
     this.notice = 'AdaptiveBP owner portal is restricted to owners. Please login as an owner.';
-  }
-
-  ngAfterViewInit(): void {
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
   }
 
   requestLogout(): void {
@@ -94,5 +88,17 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   get displayName(): string | undefined {
     return this._authService.getContext()?.username || this._authService.getContext()?.email;
+  }
+
+  getDomainThemeColor(slug: string): string {
+    return this.themeService.getDomainTheme(slug).primary;
+  }
+
+  getDomainAccentColor(slug: string): string {
+    return this.themeService.getDomainTheme(slug).accent;
+  }
+
+  getInitial(name: string): string {
+    return (name || '?').charAt(0).toUpperCase();
   }
 }

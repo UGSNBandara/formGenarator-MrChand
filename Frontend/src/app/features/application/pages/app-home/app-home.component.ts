@@ -1,26 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-const APP_THEMES = [
-  { id: 'midnight', label: 'Midnight',   primary: '#1a1a2e' },
-  { id: 'ocean',    label: 'Ocean',      primary: '#0c4a6e' },
-  { id: 'forest',   label: 'Forest',     primary: '#14532d' },
-  { id: 'ember',    label: 'Ember',      primary: '#7f1d1d' },
-  { id: 'violet',   label: 'Violet',     primary: '#3b0764' },
-  { id: 'steel',    label: 'Steel',      primary: '#1e293b' },
-  { id: 'rose',     label: 'Rose',       primary: '#881337' },
-  { id: 'amber',    label: 'Amber',      primary: '#78350f' },
-  { id: 'teal',     label: 'Teal',       primary: '#134e4a' },
-  { id: 'indigo',   label: 'Indigo',     primary: '#312e81' },
-  { id: 'slate',    label: 'Slate',      primary: '#0f172a' },
-  { id: 'plum',     label: 'Plum',       primary: '#4a044e' },
-  { id: 'pine',     label: 'Pine',       primary: '#052e16' },
-  { id: 'crimson',  label: 'Crimson',    primary: '#450a0a' },
-  { id: 'navy',     label: 'Navy',       primary: '#1e3a5f' },
-  { id: 'graphite', label: 'Graphite',   primary: '#374151' },
-];
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomainService } from '../../../../core/services/domain.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService, THEMES } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-app-home',
@@ -57,9 +40,9 @@ export class AppHomeComponent implements OnInit {
   deletingApp = false;
   deleteError = '';
 
-  // Theme pulled from localStorage (set on domain home)
+  // Theme pulled from ThemeService
   themeColor = '#1a1a2e';
-  appThemes = APP_THEMES;
+  appThemes = THEMES;
   selectedAppThemeId = 'midnight';
 
   constructor(
@@ -67,6 +50,7 @@ export class AppHomeComponent implements OnInit {
     private router: Router,
     private domainService: DomainService,
     public auth: AuthService,
+    private themeService: ThemeService,
   ) { }
 
   ngOnInit(): void {
@@ -92,13 +76,10 @@ export class AppHomeComponent implements OnInit {
     this.domainService.getApplication(this.domainSlug, this.appSlug).subscribe({
       next: (res) => {
         this.app = res;
-        const domainTheme = localStorage.getItem(`dt-${this.domainSlug}`);
-        if (domainTheme) this.themeColor = this.resolveThemeColor(domainTheme);
-        const appTheme = localStorage.getItem(`at-${this.domainSlug}-${this.appSlug}`);
-        if (appTheme) {
-          this.selectedAppThemeId = appTheme;
-          this.themeColor = this.resolveThemeColor(appTheme);
-        }
+        this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
+        const appThemeId = this.themeService.getAppThemeId(this.domainSlug, this.appSlug);
+        if (appThemeId) this.selectedAppThemeId = appThemeId;
+        else this.selectedAppThemeId = this.themeService.getDomainThemeId(this.domainSlug);
         this.initializeAccess();
       },
       error: (err) => this.error = err?.error?.message || 'Application not found'
@@ -407,13 +388,8 @@ export class AppHomeComponent implements OnInit {
 
   selectAppTheme(id: string) {
     this.selectedAppThemeId = id;
-    this.themeColor = this.resolveThemeColor(id);
-    localStorage.setItem(`at-${this.domainSlug}-${this.appSlug}`, id);
-  }
-
-  private resolveThemeColor(id: string): string {
-    const t = APP_THEMES.find(x => x.id === id);
-    return t ? t.primary : '#1a1a2e';
+    this.themeColor = this.themeService.getTheme(id).primary;
+    this.themeService.setAppTheme(this.domainSlug, this.appSlug, id);
   }
 
   // Remove user from group

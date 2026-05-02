@@ -1,46 +1,43 @@
 .modern-card {
   border-radius: var(--radius-card);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
   position: relative;
 }
 
-/* Light theme for cards usually matches standard Bootstrap cards but softer */
+/* Light theme — Apple-clean white card */
 .theme-light {
   background-color: var(--bg-light);
   color: var(--text-dark);
   box-shadow: var(--shadow-subtle);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--border-light);
 }
 
-/* Dark theme for high contrast sections */
+/* Dark theme — rich black */
 .theme-dark {
-  background-color: var(--bg-dark);
+  background-color: #1D1D1F;
   color: var(--text-light);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Glassmorphism theme */
+/* Glassmorphism */
 .theme-glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-subtle);
   color: var(--text-dark);
 }
 
-/* Optional subtle scale on hover if needed */
 .modern-card.hoverable:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  border-color: rgba(186, 255, 41, 0.5); /* Neon border on hover */
+  box-shadow: var(--shadow-hover);
 }
 
-/* Neon glow effect for featured cards */
 .glow-effect {
-  box-shadow: 0 0 20px rgba(186, 255, 41, 0.1);
-  border-color: rgba(186, 255, 41, 0.3);
+  box-shadow: 0 0 24px rgba(186, 255, 41, 0.08);
+  border-color: rgba(186, 255, 41, 0.2);
 }
 
 .p-4 {

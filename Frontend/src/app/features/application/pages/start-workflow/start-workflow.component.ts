@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProcessService } from '../../../../core/services/process.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { DomainModelField, ProcessDefinition, WorkflowStep } from '../../../../core/models/process.model';
-
-const THEME_MAP: Record<string, string> = {
-  midnight: '#1a1a2e', ocean: '#0c4a6e', forest: '#14532d', ember: '#7f1d1d',
-  violet: '#3b0764', steel: '#1e293b', rose: '#881337', amber: '#78350f',
-  teal: '#134e4a', indigo: '#312e81', slate: '#0f172a', plum: '#4a044e',
-  pine: '#052e16', crimson: '#450a0a', navy: '#1e3a5f', graphite: '#374151',
-};
 
 @Component({
   selector: 'app-start-workflow',
@@ -34,6 +28,7 @@ export class StartWorkflowComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private processService: ProcessService,
+    private themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
@@ -44,10 +39,7 @@ export class StartWorkflowComponent implements OnInit {
   }
 
   private loadTheme() {
-    const appKey = `at-${this.domainSlug}-${this.appSlug}`;
-    const domKey = `dt-${this.domainSlug}`;
-    const id = localStorage.getItem(appKey) || localStorage.getItem(domKey) || 'midnight';
-    this.themeColor = THEME_MAP[id] ?? '#1a1a2e';
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
   }
 
   private loadWorkflow(): void {

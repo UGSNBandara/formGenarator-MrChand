@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--bg-surface);
 }
 
 .fade-in {
@@ -36,7 +36,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   background: #fff;
-  color: #1e293b;
+  color: var(--text-body);
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.45rem 0.75rem;
@@ -47,7 +47,7 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -56,7 +56,7 @@
   width: 18px;
   height: 18px;
   border: 2px solid #cbd5e1;
-  border-top-color: var(--tc, #1a1a2e);
+  border-top-color: var(--theme-primary, #1a1a2e);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -101,7 +101,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--tc, #1a1a2e);
+  background: var(--theme-primary, #1a1a2e);
   color: #fff;
   display: flex;
   align-items: center;
@@ -111,13 +111,13 @@
 
 .sw-sub {
   margin: 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
 .sw-title {
   margin: 0;
-  color: #0f172a;
+  color: var(--text-heading);
 }
 
 .sw-form {
@@ -148,7 +148,7 @@
   border-radius: 8px;
   padding: 0.55rem 0.65rem;
   font-size: 0.9rem;
-  color: #0f172a;
+  color: var(--text-heading);
   background: #fff;
 }
 
@@ -171,8 +171,8 @@
 }
 
 .sw-start {
-  background: var(--tc, #1a1a2e);
-  border: 1px solid var(--tc, #1a1a2e);
+  background: var(--theme-primary, #1a1a2e);
+  border: 1px solid var(--theme-primary, #1a1a2e);
   color: #fff;
   border-radius: 10px;
   font-size: 0.9rem;

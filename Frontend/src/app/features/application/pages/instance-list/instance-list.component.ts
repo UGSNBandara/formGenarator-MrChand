@@ -10,6 +10,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProcessService } from '../../../../core/services/process.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import {
   ProcessInstance,
   TaskResponse,
@@ -25,12 +26,7 @@ interface SvgEdge {
   name: string;
 }
 
-const THEME_MAP: Record<string, string> = {
-  midnight: '#1a1a2e', ocean: '#0c4a6e', forest: '#14532d', ember: '#7f1d1d',
-  violet: '#3b0764', steel: '#1e293b', rose: '#881337', amber: '#78350f',
-  teal: '#134e4a', indigo: '#312e81', slate: '#0f172a', plum: '#4a044e',
-  pine: '#052e16', crimson: '#450a0a', navy: '#1e3a5f', graphite: '#374151',
-};
+
 
 @Component({
   selector: 'app-instance-list',
@@ -83,6 +79,7 @@ export class InstanceListComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
+    private themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
@@ -171,10 +168,7 @@ export class InstanceListComponent implements OnInit, OnDestroy {
   // ── Theme ────────────────────────────────────────────────────────────────
 
   private loadTheme() {
-    const id = localStorage.getItem(`at-${this.domainSlug}-${this.appSlug}`)
-             || localStorage.getItem(`dt-${this.domainSlug}`)
-             || 'midnight';
-    this.themeColor = THEME_MAP[id] ?? '#1a1a2e';
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
   }
 
   // ── Data loading ─────────────────────────────────────────────────────────

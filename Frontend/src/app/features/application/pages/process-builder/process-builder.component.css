@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
 
 :host {
   display: block;
   min-height: 100vh;
-  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  font-family: 'Outfit', -apple-system, sans-serif;
   background:
     radial-gradient(1200px 420px at 10% -10%, rgba(59,130,246,0.08), transparent 60%),
     radial-gradient(900px 360px at 90% 0%, rgba(16,185,129,0.08), transparent 55%),
@@ -49,7 +49,7 @@
 
 .wb-status {
   background: #e2e8f0;
-  color: #334155;
+  color: var(--text-body);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -61,7 +61,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   background: #fff;
-  color: #1e293b;
+  color: var(--text-body);
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.45rem 0.75rem;
@@ -69,7 +69,7 @@
 }
 
 .wb-btn:hover:not(:disabled) {
-  border-color: #1e293b;
+  border-color: var(--text-body);
 }
 
 .wb-btn:disabled {
@@ -78,12 +78,12 @@
 }
 
 .wb-btn-outline {
-  border-color: #94a3b8;
+  border-color: var(--text-placeholder);
 }
 
 .wb-btn-primary {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: var(--theme-primary);
+  border-color: var(--theme-primary);
   color: #fff;
 }
 
@@ -117,7 +117,7 @@
 
 .wb-loading,
 .wb-note {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.88rem;
 }
 
@@ -158,8 +158,8 @@ h3,
 h4,
 h5 {
   margin: 0;
-  color: #0f172a;
-  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  color: var(--theme-primary);
+  font-family: 'Outfit', -apple-system, sans-serif;
 }
 
 .wb-grid {
@@ -194,7 +194,7 @@ h5 {
   border-radius: 8px;
   padding: 0.52rem 0.6rem;
   font-size: 0.86rem;
-  color: #0f172a;
+  color: var(--theme-primary);
   background: #fff;
 }
 
@@ -226,7 +226,7 @@ h5 {
 
 .wb-field input:read-only,
 .wb-field select:disabled {
-  background: #f8fafc;
+  background: var(--bg-surface);
 }
 
 .wb-inline-check {
@@ -234,7 +234,7 @@ h5 {
   align-items: center;
   gap: 0.45rem;
   font-size: 0.84rem;
-  color: #334155;
+  color: var(--text-body);
   min-height: 36px;
 }
 
@@ -245,7 +245,7 @@ h5 {
   border-radius: 10px;
   padding: 0.8rem;
   font-size: 0.72rem;
-  font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   line-height: 1.45;
   overflow: auto;
   max-height: 320px;
@@ -262,7 +262,7 @@ h5 {
   align-items: center;
   gap: 0.75rem;
   padding: 2.5rem 1rem;
-  color: #64748b;
+  color: var(--text-secondary);
   text-align: center;
 }
 
@@ -274,7 +274,7 @@ h5 {
   margin-top: 0.85rem;
   padding: 1.5rem 1rem 2rem;
   border-radius: 12px;
-  background-color: #f8fafc;
+  background-color: var(--bg-surface);
   background-image: radial-gradient(circle, rgba(15,23,42,0.07) 1px, transparent 1px);
   background-size: 22px 22px;
   min-height: 160px;
@@ -312,14 +312,14 @@ h5 {
 }
 
 .wb-svg-label {
-  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  font-family: 'Outfit', -apple-system, sans-serif;
   font-size: 10px;
-  fill: #94a3b8;
+  fill: var(--text-placeholder);
   text-anchor: middle;
   dominant-baseline: middle;
   pointer-events: none;   /* visual only */
   paint-order: stroke;
-  stroke: #f8fafc;
+  stroke: var(--bg-surface);
   stroke-width: 4px;
   stroke-linejoin: round;
   transition: fill 150ms ease;
@@ -393,7 +393,7 @@ h5 {
 
 .wb-node-title {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--theme-primary);
   font-size: 0.92rem;
 }
 
@@ -420,9 +420,9 @@ h5 {
 
 .wb-node-meta {
   font-size: 0.68rem;
-  color: #94a3b8;
+  color: var(--text-placeholder);
   margin-top: 0.3rem;
-  font-family: 'Space Mono', monospace;
+  font-family: ui-monospace, monospace;
 }
 
 .wb-node-stats {
@@ -523,7 +523,7 @@ h5 {
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.62rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0 0 0.25rem 0;
 }
 

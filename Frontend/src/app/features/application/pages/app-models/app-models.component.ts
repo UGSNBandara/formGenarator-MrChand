@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import {
   DomainService,
   DomainFieldType,
@@ -50,6 +51,7 @@ export class AppModelsComponent implements OnInit {
     private fb: FormBuilder,
     private domainService: DomainService,
     public auth: AuthService,
+    private themeService: ThemeService,
   ) {
     this.modelForm = this.fb.group({
       name: ['', Validators.required],
@@ -61,9 +63,12 @@ export class AppModelsComponent implements OnInit {
     });
   }
 
+  themeColor = '#1a1a2e';
+
   ngOnInit(): void {
     this.domainSlug = this.route.snapshot.params['slug'];
     this.appSlug = this.route.snapshot.params['appSlug'];
+    this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
 
     if (!this.domainSlug || !this.appSlug) {
       this.error = 'Missing domain/app context';
