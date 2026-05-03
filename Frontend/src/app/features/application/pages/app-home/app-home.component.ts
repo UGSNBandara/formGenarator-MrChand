@@ -89,6 +89,11 @@ export class AppHomeComponent implements OnInit {
     this.domainService.getApplication(this.domainSlug, this.appSlug).subscribe({
       next: (res) => {
         this.app = res;
+        if (this.app?.metadata?.branding?.themeId) {
+          this.selectedAppThemeId = this.app.metadata.branding.themeId;
+          this.themeColor = this.themeService.getTheme(this.selectedAppThemeId).primary;
+          this.themeService.cacheAppTheme(this.domainSlug, this.appSlug, this.selectedAppThemeId);
+        }
         this.initializeAccess();
       },
       error: (err) => this.error = err?.error?.message || 'Application not found'
@@ -398,7 +403,12 @@ export class AppHomeComponent implements OnInit {
   selectAppTheme(id: string) {
     this.selectedAppThemeId = id;
     this.themeColor = this.themeService.getTheme(id).primary;
-    this.themeService.setAppTheme(this.domainSlug, this.appSlug, id);
+    this.themeService.cacheAppTheme(this.domainSlug, this.appSlug, id);
+
+    this.domainService.updateApplicationBranding(this.domainSlug, this.appSlug, { themeId: id }).subscribe({
+      next: () => console.log('App theme saved globally'),
+      error: (err) => console.error('Failed to save app theme globally', err)
+    });
   }
 
   // Remove user from group

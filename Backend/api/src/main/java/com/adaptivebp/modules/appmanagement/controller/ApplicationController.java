@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -102,6 +103,48 @@ public class ApplicationController {
         }
         applicationDeletionService.deleteApplication(domain.getId(), app);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{appSlug}/branding")
+    public ResponseEntity<?> updateBranding(
+            @PathVariable String slug,
+            @PathVariable String appSlug,
+            @RequestBody java.util.Map<String, Object> branding) {
+        
+        Organisation domain = requireDomain(slug);
+        Application app = applicationRepository.findByDomainIdAndSlug(domain.getId(), appSlug)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
+        
+        // Ensure user has configure permission
+        if (!permissionService.hasAppPermission(app.getId(), AppPermission.APP_CONFIGURE)) {
+            // Also allow domain owner
+            String currentUserId = currentPrincipalId();
+            boolean isOwner = currentUserId != null && currentUserId.equals(domain.getOwnerUserId());
+            if (!isOwner) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Only app admins can update app settings.");
+            }
+        }
+
+        java.util.Map<String, Object> metadata = app.getMetadata();
+        if (metadata == null) {
+            metadata = new java.util.HashMap<>();
+        }
+
+        java.util.Map<String, Object> existingBranding = new java.util.HashMap<>();
+        Object existing = metadata.get("branding");
+        if (existing instanceof java.util.Map) {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> existingMap = (java.util.Map<String, Object>) existing;
+            existingBranding.putAll(existingMap);
+        }
+        existingBranding.putAll(branding);
+
+        metadata.put("branding", existingBranding);
+        app.setMetadata(metadata);
+        applicationRepository.save(app);
+
+        return ResponseEntity.ok(existingBranding);
     }
 
     private Organisation requireDomain(String slug) {

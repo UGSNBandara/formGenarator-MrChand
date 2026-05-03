@@ -252,6 +252,10 @@ export class DomainService {
   updateDomainBranding(slug: string, branding: any): Observable<any> {
     return this.baseService.patch(`${this.adaptive}/domains/${slug}/branding`, true, branding);
   }
+
+  updateApplicationBranding(slug: string, appSlug: string, branding: any): Observable<any> {
+    return this.baseService.patch(`${this.adaptive}/domains/${slug}/apps/${appSlug}/branding`, true, branding);
+  }
 }
 
 export const _domainService = [

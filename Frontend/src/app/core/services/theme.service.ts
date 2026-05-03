@@ -62,6 +62,9 @@ export class ThemeService {
     return THEMES.find(t => t.id === id) ?? DEFAULT_THEME;
   }
 
+  private brandingCache = new Map<string, DomainBranding>();
+  private appBrandingCache = new Map<string, string>(); // domainSlug:appSlug -> themeId
+
   // ── Domain theme (server-driven) ──────────────────────────────────────────
 
   /**
@@ -69,7 +72,9 @@ export class ThemeService {
    * Called by domain-home on load so subsequent lookups are instant.
    */
   cacheBranding(slug: string, branding: DomainBranding): void {
-    this.brandingCache.set(slug, branding);
+    if (branding) {
+      this.brandingCache.set(slug, branding);
+    }
   }
 
   /** Get cached branding for a domain, or null if not yet fetched */
@@ -99,21 +104,22 @@ export class ThemeService {
     existing.themeId = themeId;
     this.brandingCache.set(slug, existing);
   }
-
   // ── App theme ─────────────────────────────────────────────────────────────
 
+  cacheAppTheme(domainSlug: string, appSlug: string, themeId: string): void {
+    if (themeId) {
+      this.appBrandingCache.set(`${domainSlug}:${appSlug}`, themeId);
+    }
+  }
+
   getAppThemeId(domainSlug: string, appSlug: string): string {
-    return localStorage.getItem(`at-${domainSlug}-${appSlug}`) || '';
+    return this.appBrandingCache.get(`${domainSlug}:${appSlug}`) || '';
   }
 
   getAppTheme(domainSlug: string, appSlug: string): AppTheme {
     const id = this.getAppThemeId(domainSlug, appSlug);
     if (id) return this.getTheme(id);
     return this.getDomainTheme(domainSlug);
-  }
-
-  setAppTheme(domainSlug: string, appSlug: string, themeId: string): void {
-    localStorage.setItem(`at-${domainSlug}-${appSlug}`, themeId);
   }
 
   // ── Resolve effective theme color for any app-level page ────────────────

@@ -81,7 +81,13 @@ export class GlobalNavComponent implements OnInit, OnDestroy {
           this.domainService.getApplication(this.domainSlug, this.appSlug).pipe(
             catchError(() => of(null))
           ).subscribe(a => {
-            if (a) this.appName = a.name;
+            if (a) {
+              this.appName = a.name;
+              if (a.metadata?.branding?.themeId) {
+                this.themeService.cacheAppTheme(this.domainSlug, this.appSlug, a.metadata.branding.themeId);
+                this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
+              }
+            }
           });
         }
         this.updateThemeColor();
