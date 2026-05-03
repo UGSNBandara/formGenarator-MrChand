@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.adaptivebp.modules.identity.dto.request.DomainLoginRequest;
 import com.adaptivebp.modules.identity.model.DomainUser;
-import com.adaptivebp.modules.organisation.repository.OrganisationRepository;
+import com.adaptivebp.modules.organisation.port.OrganisationLookupPort;
 import com.adaptivebp.modules.identity.repository.DomainUserRepository;
 import com.adaptivebp.modules.organisation.model.Organisation;
 import com.adaptivebp.shared.security.JwtTokenProvider;
@@ -29,7 +29,7 @@ import com.adaptivebp.shared.security.JwtTokenProvider;
 class DomainAuthControllerTest {
 
     @Mock
-    private OrganisationRepository organisationRepository;
+    private OrganisationLookupPort organisationLookupPort;
 
     @Mock
     private DomainUserRepository domainUserRepository;
@@ -64,7 +64,7 @@ class DomainAuthControllerTest {
         request.setUsername("alice");
         request.setPassword("secret");
 
-        when(organisationRepository.findBySlug("acme")).thenReturn(Optional.of(organisation));
+        when(organisationLookupPort.findBySlug("acme")).thenReturn(Optional.of(organisation));
         when(domainUserRepository.findByDomainIdAndUsername(organisation.getId(), request.getUsername()))
                 .thenReturn(Optional.of(domainUser));
         when(passwordEncoder.matches(request.getPassword(), domainUser.getPasswordHash())).thenReturn(true);
@@ -79,7 +79,7 @@ class DomainAuthControllerTest {
 
     @Test
     void login_shouldFail_whenDomainMissing() {
-        when(organisationRepository.findBySlug("acme")).thenReturn(Optional.empty());
+        when(organisationLookupPort.findBySlug("acme")).thenReturn(Optional.empty());
         DomainLoginRequest request = new DomainLoginRequest();
         request.setUsername("any");
         request.setPassword("pw");

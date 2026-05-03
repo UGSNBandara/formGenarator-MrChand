@@ -28,8 +28,7 @@ import com.adaptivebp.modules.identity.model.Role;
 import com.adaptivebp.modules.identity.model.User;
 import com.adaptivebp.modules.identity.repository.RoleRepository;
 import com.adaptivebp.modules.identity.repository.UserRepository;
-import com.adaptivebp.modules.organisation.model.Organisation;
-import com.adaptivebp.modules.organisation.repository.OrganisationRepository;
+import com.adaptivebp.modules.identity.service.DomainAssignmentService;
 import com.adaptivebp.shared.security.JwtTokenProvider;
 import com.adaptivebp.shared.security.UserDetailsImpl;
 
@@ -46,7 +45,7 @@ public class AuthController {
 	@Autowired
 	RoleRepository roleRepository;
 	@Autowired
-	OrganisationRepository organisationRepository;
+	DomainAssignmentService domainAssignmentService;
 	@Autowired
 	PasswordEncoder encoder;
 	@Autowired
@@ -121,32 +120,10 @@ public class AuthController {
 		Set<ObjectId> roleIds = roles.stream().map(r -> new ObjectId(r.getId())).collect(Collectors.toSet());
 		user.setRoles(roleIds);
 		User saved = userRepository.save(user);
-		String domainId = assignDomainForUser(saved, roles);
+		String domainId = domainAssignmentService.assignDomainForUser(saved, roles);
 		saved.setDomainId(domainId);
 		userRepository.save(saved);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
-
-	private String assignDomainForUser(User savedUser, Set<Role> roles) {
-		boolean isBusinessOwner = roles.stream().anyMatch(r ->
-			("BUSINESS_OWNER".equalsIgnoreCase(r.getRoleName())) || r.getName() == ERole.ROLE_BUSINESS_OWNER);
-		if (isBusinessOwner) {
-			String baseName = savedUser.getUsername() != null ? savedUser.getUsername().toLowerCase() : "domain";
-			String name = baseName;
-			if (organisationRepository.existsByName(name)) {
-				name = baseName + "-" + savedUser.getId().substring(0, Math.min(6, savedUser.getId().length()));
-			}
-			Organisation d = new Organisation(name, savedUser.getId());
-			Organisation created = organisationRepository.save(d);
-			return created.getId();
-		} else {
-			return organisationRepository.findByName("global")
-				.map(Organisation::getId)
-				.orElseGet(() -> {
-					Organisation global = new Organisation("global", savedUser.getId());
-					Organisation created = organisationRepository.save(global);
-					return created.getId();
-				});
-		}
-	}
 }
+
