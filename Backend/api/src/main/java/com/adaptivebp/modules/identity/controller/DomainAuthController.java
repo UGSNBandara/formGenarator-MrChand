@@ -17,7 +17,7 @@ import com.adaptivebp.modules.identity.dto.response.AuthResponse;
 import com.adaptivebp.modules.identity.model.DomainUser;
 import com.adaptivebp.modules.identity.repository.DomainUserRepository;
 import com.adaptivebp.modules.organisation.model.Organisation;
-import com.adaptivebp.modules.organisation.repository.OrganisationRepository;
+import com.adaptivebp.modules.organisation.port.OrganisationLookupPort;
 import com.adaptivebp.shared.security.AdaptiveUserDetails;
 import com.adaptivebp.shared.security.JwtTokenProvider;
 import com.adaptivebp.shared.security.PrincipalType;
@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 public class DomainAuthController {
 
     @Autowired
-    private OrganisationRepository organisationRepository;
+    private OrganisationLookupPort organisationLookupPort;
 
     @Autowired
     private DomainUserRepository domainUserRepository;
@@ -42,7 +42,7 @@ public class DomainAuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@PathVariable String slug, @Valid @RequestBody DomainSignupRequest request) {
-        Organisation domain = organisationRepository.findBySlug(slugify(slug)).orElse(null);
+        Organisation domain = organisationLookupPort.findBySlug(slugify(slug)).orElse(null);
         if (domain == null) {
             return ResponseEntity.notFound().build();
         }
@@ -64,7 +64,7 @@ public class DomainAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@PathVariable String slug, @Valid @RequestBody DomainLoginRequest request) {
-        Organisation domain = organisationRepository.findBySlug(slugify(slug)).orElse(null);
+        Organisation domain = organisationLookupPort.findBySlug(slugify(slug)).orElse(null);
         if (domain == null) {
             return ResponseEntity.status(404).body("Domain not found");
         }

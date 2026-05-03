@@ -19,13 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.adaptivebp.modules.identity.repository.RoleRepository;
 import com.adaptivebp.modules.identity.repository.UserRepository;
-import com.adaptivebp.modules.organisation.repository.OrganisationRepository;
+import com.adaptivebp.modules.identity.service.DomainAssignmentService;
 import com.adaptivebp.modules.identity.model.ERole;
 import com.adaptivebp.modules.identity.dto.response.MessageResponse;
 import com.adaptivebp.modules.identity.model.Role;
 import com.adaptivebp.modules.identity.dto.request.SignupRequest;
 import com.adaptivebp.modules.identity.model.User;
-import com.adaptivebp.modules.organisation.model.Organisation;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerCanonicalRoleTest {
@@ -37,7 +36,7 @@ public class AuthControllerCanonicalRoleTest {
     private RoleRepository roleRepository;
 
     @Mock
-    private OrganisationRepository organisationRepository;
+    private DomainAssignmentService domainAssignmentService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -56,16 +55,12 @@ public class AuthControllerCanonicalRoleTest {
         User savedUser = new User("testuser", "test@example.com", "encoded_password");
         savedUser.setId("mockUserId");
 
-        Organisation createdOrg = new Organisation("testuser", "mockUserId");
-        createdOrg.setId("mockDomainId");
-
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(roleRepository.findByRoleName("BUSINESS_OWNER")).thenReturn(Optional.of(businessOwnerRole));
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
         when(userRepository.save(any())).thenReturn(savedUser);
-        when(organisationRepository.existsByName("testuser")).thenReturn(false);
-        when(organisationRepository.save(any(Organisation.class))).thenReturn(createdOrg);
+        when(domainAssignmentService.assignDomainForUser(any(User.class), any())).thenReturn("mockDomainId");
 
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername("testuser");
@@ -93,15 +88,12 @@ public class AuthControllerCanonicalRoleTest {
         User savedUser = new User("adminuser", "admin@example.com", "encoded_password");
         savedUser.setId("mockUserId");
 
-        Organisation globalOrg = new Organisation("global", "someOwnerId");
-        globalOrg.setId("globalDomainId");
-
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(roleRepository.findByRoleName("DOMAIN_ADMIN")).thenReturn(Optional.of(domainAdminRole));
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
         when(userRepository.save(any())).thenReturn(savedUser);
-        when(organisationRepository.findByName("global")).thenReturn(Optional.of(globalOrg));
+        when(domainAssignmentService.assignDomainForUser(any(User.class), any())).thenReturn("globalDomainId");
 
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername("adminuser");
@@ -129,15 +121,12 @@ public class AuthControllerCanonicalRoleTest {
         User savedUser = new User("regularuser", "user@example.com", "encoded_password");
         savedUser.setId("mockUserId");
 
-        Organisation globalOrg = new Organisation("global", "someOwnerId");
-        globalOrg.setId("globalDomainId");
-
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(roleRepository.findByRoleName("BUSINESS_USER")).thenReturn(Optional.of(businessUserRole));
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
         when(userRepository.save(any())).thenReturn(savedUser);
-        when(organisationRepository.findByName("global")).thenReturn(Optional.of(globalOrg));
+        when(domainAssignmentService.assignDomainForUser(any(User.class), any())).thenReturn("globalDomainId");
 
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername("regularuser");
