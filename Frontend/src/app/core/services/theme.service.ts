@@ -9,6 +9,19 @@ export interface AppTheme {
   accent: string;
 }
 
+export interface DomainBranding {
+  themeId?: string;
+  heroLayout?: 'default' | 'compact' | 'minimal';
+  logoUrl?: string;
+  navStyle?: 'tabs' | 'sidebar';
+  cornerRadius?: 'rounded' | 'sharp' | 'pill';
+  density?: 'comfortable' | 'compact';
+  appCardLayout?: 'grid' | 'list';
+  customPrimary?: string;
+  customAccent?: string;
+  loginMessage?: string;
+}
+
 export const THEMES: AppTheme[] = [
   { id: 'midnight', label: 'Midnight',  name: 'Midnight',  primary: '#1a1a2e', accent: '#baff29' },
   { id: 'ocean',    label: 'Ocean',     name: 'Ocean',     primary: '#0c4a6e', accent: '#38bdf8' },
@@ -29,6 +42,17 @@ export const THEMES: AppTheme[] = [
 ];
 
 const DEFAULT_THEME = THEMES[0];
+
+const RADIUS_MAP: Record<string, string> = {
+  'rounded': '20px',
+  'sharp': '6px',
+  'pill': '32px',
+};
+
+const DENSITY_MAP: Record<string, string> = {
+  'comfortable': '1.5rem',
+  'compact': '0.85rem',
+};
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
@@ -75,5 +99,68 @@ export class ThemeService {
 
   resolveThemeColor(domainSlug: string, appSlug: string): string {
     return this.getAppTheme(domainSlug, appSlug).primary;
+  }
+
+  // ── Branding Application ────────────────────────────────────────────────
+
+  /**
+   * Apply branding config as CSS custom properties on the document root.
+   * Called when a domain page loads with server-persisted branding.
+   */
+  applyBranding(branding: DomainBranding | null): void {
+    const root = document.documentElement;
+
+    if (!branding) return;
+
+    // Theme colors
+    if (branding.themeId) {
+      const theme = this.getTheme(branding.themeId);
+      root.style.setProperty('--theme-primary', branding.customPrimary || theme.primary);
+      root.style.setProperty('--theme-accent', branding.customAccent || theme.accent);
+    } else if (branding.customPrimary) {
+      root.style.setProperty('--theme-primary', branding.customPrimary);
+      if (branding.customAccent) {
+        root.style.setProperty('--theme-accent', branding.customAccent);
+      }
+    }
+
+    // Corner radius
+    if (branding.cornerRadius && RADIUS_MAP[branding.cornerRadius]) {
+      root.style.setProperty('--radius-card', RADIUS_MAP[branding.cornerRadius]);
+    }
+
+    // Density
+    if (branding.density && DENSITY_MAP[branding.density]) {
+      root.style.setProperty('--density-padding', DENSITY_MAP[branding.density]);
+    }
+  }
+
+  /**
+   * Clear any branding overrides from the document root.
+   */
+  clearBranding(): void {
+    const root = document.documentElement;
+    root.style.removeProperty('--theme-primary');
+    root.style.removeProperty('--theme-accent');
+    root.style.removeProperty('--radius-card');
+    root.style.removeProperty('--density-padding');
+  }
+
+  /**
+   * Build a default branding object (for reset).
+   */
+  getDefaultBranding(): DomainBranding {
+    return {
+      themeId: 'midnight',
+      heroLayout: 'default',
+      logoUrl: '',
+      navStyle: 'tabs',
+      cornerRadius: 'rounded',
+      density: 'comfortable',
+      appCardLayout: 'grid',
+      customPrimary: '',
+      customAccent: '',
+      loginMessage: '',
+    };
   }
 }

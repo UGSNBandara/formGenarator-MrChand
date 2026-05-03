@@ -69,6 +69,19 @@ export class BaseService {
     }
   }
 
+  patch(path: any, isAuthorizedRequest: boolean, data: any): Observable<any> {
+    if (isAuthorizedRequest) {
+      return this.http.patch(path, data, {
+        headers: {
+          "Authorization": this.tokenGenerator(),
+          "token": this.tokenRaw()
+        }
+      });
+    } else {
+      return this.http.patch(path, data);
+    }
+  }
+
   private tokenGenerator() {
     return "Bearer " + this.tokenRaw();
   }
