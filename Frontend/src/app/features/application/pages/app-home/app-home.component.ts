@@ -73,13 +73,21 @@ export class AppHomeComponent implements OnInit {
   }
 
   private loadApplication() {
+    // Load global domain branding from server (applies to all users)
+    this.domainService.getDomainBranding(this.domainSlug).subscribe({
+      next: (b) => {
+        if (b?.themeId) {
+          this.selectedAppThemeId = b.themeId;
+          this.themeColor = this.themeService.getTheme(b.themeId).primary;
+        }
+        this.themeService.applyBranding(b);
+      },
+      error: () => { /* fallback to defaults */ }
+    });
+
     this.domainService.getApplication(this.domainSlug, this.appSlug).subscribe({
       next: (res) => {
         this.app = res;
-        this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
-        const appThemeId = this.themeService.getAppThemeId(this.domainSlug, this.appSlug);
-        if (appThemeId) this.selectedAppThemeId = appThemeId;
-        else this.selectedAppThemeId = this.themeService.getDomainThemeId(this.domainSlug);
         this.initializeAccess();
       },
       error: (err) => this.error = err?.error?.message || 'Application not found'
