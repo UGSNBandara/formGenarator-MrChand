@@ -162,6 +162,9 @@ export class DomainHomeComponent implements OnInit {
   ngOnInit(): void {
     this.slug = this.route.snapshot.params['slug'];
     if (this.slug) {
+      // Always load branding (public endpoint) — works for unauthenticated users too
+      this.loadBranding();
+
       this.domainService.getBySlug(this.slug).subscribe({
         next: (res) => {
           this.domain = res;
@@ -169,7 +172,6 @@ export class DomainHomeComponent implements OnInit {
           this.mode = 'PREVIEW';
           this.showCreateAppForm = false;
           this.loadTheme();
-          this.loadBranding();
           this.initializeAccess();
         },
         error: (err) => this.error = err?.error?.message || 'Domain not found or access denied'
