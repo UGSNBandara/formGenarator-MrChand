@@ -62,7 +62,6 @@ export class ThemeService {
     return THEMES.find(t => t.id === id) ?? DEFAULT_THEME;
   }
 
-  private brandingCache = new Map<string, DomainBranding>();
   private appBrandingCache = new Map<string, string>(); // domainSlug:appSlug -> themeId
 
   // ── Domain theme (server-driven) ──────────────────────────────────────────
