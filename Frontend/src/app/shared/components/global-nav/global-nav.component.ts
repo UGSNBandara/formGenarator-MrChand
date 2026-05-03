@@ -60,7 +60,14 @@ export class GlobalNavComponent implements OnInit, OnDestroy {
         this.domainService.getBySlug(this.domainSlug).pipe(
           catchError(() => of(null))
         ).subscribe(d => {
-          if (d) this.domainName = d.name;
+          if (d) {
+            this.domainName = d.name;
+            if (d.metadata && d.metadata.branding) {
+              this.themeService.cacheBranding(this.domainSlug, d.metadata.branding);
+              this.themeService.applyBranding(d.metadata.branding);
+              this.updateThemeColor();
+            }
+          }
         });
       }
       
@@ -77,17 +84,27 @@ export class GlobalNavComponent implements OnInit, OnDestroy {
             if (a) this.appName = a.name;
           });
         }
-        this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
+        this.updateThemeColor();
       } else {
         this.appSlug = '';
         this.appName = '';
-        this.themeColor = this.themeService.getDomainTheme(this.domainSlug).primary;
+        this.updateThemeColor();
       }
     } else {
       this.domainSlug = '';
       this.domainName = '';
       this.appSlug = '';
       this.appName = '';
+      this.themeColor = '';
+    }
+  }
+
+  private updateThemeColor(): void {
+    if (this.appSlug) {
+      this.themeColor = this.themeService.resolveThemeColor(this.domainSlug, this.appSlug);
+    } else if (this.domainSlug) {
+      this.themeColor = this.themeService.getDomainTheme(this.domainSlug).primary;
+    } else {
       this.themeColor = '';
     }
   }

@@ -73,6 +73,14 @@ export class HomePageComponent implements OnInit {
     this.domainService.getMyDomains().subscribe({
       next: (domains) => {
         this.domains = domains;
+        
+        // Cache server branding for all domains so the theme correctly applies to dashboard cards
+        this.domains.forEach(d => {
+          if (d.metadata && d.metadata.branding) {
+            this.themeService.cacheBranding(d.slug, d.metadata.branding);
+          }
+        });
+        
         this.loadingDomains = false;
       },
       error: (error) => {
