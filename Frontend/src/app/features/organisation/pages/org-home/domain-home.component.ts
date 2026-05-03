@@ -115,12 +115,9 @@ export class DomainHomeComponent implements OnInit {
   selectTheme(id: string): void {
     this.selectedThemeId = id;
     this.brandingDraft.themeId = id;
-    this.themeService.setDomainTheme(this.slug, id);
   }
 
-  private loadTheme(): void {
-    this.selectedThemeId = this.themeService.getDomainThemeId(this.slug);
-  }
+
 
   constructor(
     private route: ActivatedRoute,
@@ -171,7 +168,6 @@ export class DomainHomeComponent implements OnInit {
           this.domainDescription = res.description || '';
           this.mode = 'PREVIEW';
           this.showCreateAppForm = false;
-          this.loadTheme();
           this.initializeAccess();
         },
         error: (err) => this.error = err?.error?.message || 'Domain not found or access denied'
@@ -187,10 +183,9 @@ export class DomainHomeComponent implements OnInit {
         this.branding = b || {};
         this.brandingDraft = { ...this.branding };
 
-        // Sync theme from server branding if set
+        // Sync theme from server branding (global for ALL users)
         if (this.branding.themeId) {
           this.selectedThemeId = this.branding.themeId;
-          this.themeService.setDomainTheme(this.slug, this.branding.themeId);
         }
 
         // Apply branding CSS vars
@@ -225,9 +220,8 @@ export class DomainHomeComponent implements OnInit {
           this.domain.description = this.domainDescription;
         }
 
-        // Also persist theme choice locally
+        // Update theme from server response
         if (saved.themeId) {
-          this.themeService.setDomainTheme(this.slug, saved.themeId);
           this.selectedThemeId = saved.themeId;
         }
 
