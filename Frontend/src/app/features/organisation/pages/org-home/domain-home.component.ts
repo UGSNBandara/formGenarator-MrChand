@@ -92,8 +92,13 @@ export class DomainHomeComponent implements OnInit {
     { value: 'list', label: 'List' },
   ];
 
+  /** Returns the draft during SETTINGS mode so the page live-previews; otherwise the saved branding */
+  get activeBranding(): DomainBranding {
+    return this.mode === 'SETTINGS' ? this.brandingDraft : this.branding;
+  }
+
   get currentTheme() {
-    return this.themeService.getTheme(this.brandingDraft.themeId || this.selectedThemeId);
+    return this.themeService.getTheme(this.activeBranding.themeId || this.selectedThemeId);
   }
 
   get heroBg(): string {
