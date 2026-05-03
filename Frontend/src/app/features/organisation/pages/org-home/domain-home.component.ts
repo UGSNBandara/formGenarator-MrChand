@@ -69,6 +69,7 @@ export class DomainHomeComponent implements OnInit {
   brandingSaving = false;
   brandingMessage = '';
   brandingError = '';
+  domainDescription = '';
 
   readonly heroLayoutOptions = [
     { value: 'default', label: 'Default' },
@@ -164,6 +165,7 @@ export class DomainHomeComponent implements OnInit {
       this.domainService.getBySlug(this.slug).subscribe({
         next: (res) => {
           this.domain = res;
+          this.domainDescription = res.description || '';
           this.mode = 'PREVIEW';
           this.showCreateAppForm = false;
           this.loadTheme();
@@ -205,13 +207,21 @@ export class DomainHomeComponent implements OnInit {
     this.brandingMessage = '';
     this.brandingError = '';
 
-    this.domainService.updateDomainBranding(this.slug, this.brandingDraft).subscribe({
+    // Include description in the branding payload
+    const payload = { ...this.brandingDraft, description: this.domainDescription };
+
+    this.domainService.updateDomainBranding(this.slug, payload).subscribe({
       next: (saved) => {
         this.branding = saved;
         this.brandingDraft = { ...saved };
         this.brandingSaving = false;
-        this.brandingMessage = 'Branding saved successfully.';
+        this.brandingMessage = 'Settings saved successfully.';
         this.themeService.applyBranding(saved);
+
+        // Update the domain object locally so description shows in hero
+        if (this.domain) {
+          this.domain.description = this.domainDescription;
+        }
 
         // Also persist theme choice locally
         if (saved.themeId) {

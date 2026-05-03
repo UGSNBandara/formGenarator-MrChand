@@ -160,6 +160,10 @@
   font-size: 1.5rem;
   margin-bottom: 0;
 }
+.d-hero--minimal .d-hero-desc,
+.d-hero--minimal .d-hero-chips {
+  display: none;
+}
 .d-hero--minimal::after {
   display: none;
 }

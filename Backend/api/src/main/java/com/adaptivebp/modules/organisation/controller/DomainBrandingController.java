@@ -71,6 +71,12 @@ public class DomainBrandingController {
                     .body("Only the domain owner can update branding settings.");
         }
 
+        // Extract and save description directly on the Organisation entity
+        Object descriptionValue = branding.remove("description");
+        if (descriptionValue instanceof String) {
+            org.setDescription((String) descriptionValue);
+        }
+
         // Merge branding into metadata
         Map<String, Object> metadata = org.getMetadata();
         if (metadata == null) {

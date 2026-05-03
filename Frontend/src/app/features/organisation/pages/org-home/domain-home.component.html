@@ -42,7 +42,7 @@
         <span *ngIf="domain.industry" class="d-industry-chip">{{ domain.industry }}</span>
       </div>
       <h1 class="d-hero-name">{{ domain?.name || '...' }}</h1>
-      <p *ngIf="domain?.description && activeBranding.heroLayout !== 'minimal'" class="d-hero-desc">{{ domain.description }}</p>
+      <p *ngIf="domain?.description" class="d-hero-desc">{{ domain.description }}</p>
     </div>
   </div>
 
@@ -275,6 +275,20 @@
           <!-- Settings panel -->
           <div class="d-settings-panel">
 
+            <!-- Identity -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Identity</h3>
+              <p class="d-muted">Domain name and description shown in the hero banner.</p>
+              <div class="d-field mt-2">
+                <label class="d-label">Domain Name</label>
+                <input class="d-input" type="text" [value]="domain?.name || ''" disabled placeholder="Set during creation" />
+              </div>
+              <div class="d-field mt-2">
+                <label class="d-label">Description</label>
+                <input class="d-input" type="text" [(ngModel)]="domainDescription" placeholder="Add a short description for your domain" />
+              </div>
+            </div>
+
             <!-- Theme -->
             <div class="d-settings-card">
               <h3 class="d-settings-card-title">Theme</h3>
@@ -417,7 +431,7 @@
 
           <!-- ── Login ── -->
           <div *ngIf="activeAuthTab === 'login'" class="d-auth-form">
-            <h2 class="d-auth-heading">Welcome back</h2>
+            <h2 class="d-auth-heading">{{ branding.loginMessage || 'Welcome back' }}</h2>
             <p class="d-auth-sub">Sign in to <strong>{{ domain?.name }}</strong></p>
 
             <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
