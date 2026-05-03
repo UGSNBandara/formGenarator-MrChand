@@ -1,6 +1,6 @@
 # AdaptiveBP — C4 Architecture Diagrams
 
-> **Last updated:** 2026-02-25  
+> **Last updated:** 2026-05-03  
 > **Notation:** [C4 Model](https://c4model.com/) rendered with Mermaid  
 > **Scope:** Documents the **current** system as deployed, not aspirational targets
 
@@ -58,7 +58,7 @@ C4Container
 
     Container_Boundary(platform, "AdaptiveBP Platform") {
         Container(spa, "Frontend SPA", "Angular 17, TypeScript", "Single-page application served to the browser. Lazy-loaded feature modules for auth, domains, apps, and form builder.")
-        Container(api, "Backend API", "Spring Boot 3.3.1, Java 17", "REST API server. Modular monolith with identity, organisation, app management, and form builder modules.")
+        Container(api, "Backend API", "Spring Boot 3.3.1, Java 17", "REST API server. Modular monolith with identity, organisation, app management, form builder, process, and workflow modules.")
         ContainerDb(mongo, "MongoDB Atlas", "MongoDB 7.x", "Stores owner accounts, domain users, organisations, groups, applications, and domain models.")
     }
 
@@ -84,23 +84,31 @@ C4Component
         Component(exception, "Exception Handler", "shared.exception", "Global @ControllerAdvice")
         Component(audit, "Auditable", "shared.audit", "Base class for created/updated timestamps")
 
-        Component(identity, "Identity Module", "modules.identity", "Owner signup/login, domain user signup/login, role & password management")
-        Component(organisation, "Organisation Module", "modules.organisation", "Domain CRUD, domain groups, group membership, RBAC permission checks")
-        Component(appMgmt, "App Management Module", "modules.appmanagement", "Application CRUD, app groups, app-level RBAC")
-        Component(formBuilder, "Form Builder Module", "modules.formbuilder", "Domain model (schema) CRUD: fields, types, app-scoping")
+        Component(identity, "Identity Module", "modules.identity", "Owner signup/login, domain user signup/login, role & password management. Uses OrganisationLookupPort for domain provisioning.")
+        Component(organisation, "Organisation Module", "modules.organisation", "Domain CRUD, domain groups, group membership, RBAC permission checks. Exposes OrganisationLookupPort.")
+        Component(appMgmt, "App Management Module", "modules.appmanagement", "Application CRUD, app groups, app-level RBAC. Exposes ApplicationLookupPort.")
+        Component(formBuilder, "Form Builder Module", "modules.formbuilder", "Domain model (schema) CRUD, model records, model templates, employee model.")
+        Component(process, "Process Module", "modules.process", "Process definition lifecycle (draft/publish/archive), process templates, process instance engine.")
+        Component(workflow, "Workflow Module", "modules.workflow", "Workflow definition CRUD, workflow instance execution, task management.")
     }
 
     ContainerDb(mongo, "MongoDB Atlas", "")
 
     Rel(identity, security, "Issues & validates JWT")
+    Rel(identity, organisation, "Provisions domains via OrganisationLookupPort")
     Rel(identity, mongo, "Reads/writes owner_accounts, domain_users, users, roles")
-    Rel(organisation, identity, "Resolves principal type via PermissionService")
+    Rel(organisation, security, "Resolves principal type via PermissionService")
     Rel(organisation, mongo, "Reads/writes organisations, domain_groups, domain_group_members")
-    Rel(appMgmt, organisation, "Checks domain ownership/permissions")
+    Rel(appMgmt, organisation, "Checks domain permissions via OrganisationLookupPort + PermissionService")
     Rel(appMgmt, mongo, "Reads/writes applications, app_groups, app_group_members")
-    Rel(formBuilder, appMgmt, "Validates app access")
-    Rel(formBuilder, organisation, "Validates domain access")
-    Rel(formBuilder, mongo, "Reads/writes domain_models")
+    Rel(formBuilder, appMgmt, "Validates app access via ApplicationLookupPort + PermissionService")
+    Rel(formBuilder, organisation, "Validates domain access via OrganisationLookupPort")
+    Rel(formBuilder, mongo, "Reads/writes domain_models, model_records, model_templates")
+    Rel(process, appMgmt, "Resolves app via ApplicationLookupPort")
+    Rel(process, organisation, "Resolves domain via OrganisationLookupPort")
+    Rel(process, mongo, "Reads/writes process_definitions, process_instances, process_templates")
+    Rel(workflow, appMgmt, "Resolves app context")
+    Rel(workflow, mongo, "Reads/writes workflow_definitions, workflow_instances")
     Rel(config, security, "Configures filter chain")
 ```
 
@@ -172,6 +180,10 @@ classDiagram
         +POST /custom_form/user/roles
     }
 
+    class DomainAssignmentService {
+        +assignDomainForUser(user, roles) String
+    }
+
     class AdaptivePrincipalService {
         +loadById(id, type, domainId) Optional~AdaptiveUserDetails~
         +mapOwner(OwnerAccount) AdaptiveUserDetails
@@ -190,7 +202,7 @@ classDiagram
         -String domainId
         -String username
         -String email
-        -String password
+        -String passwordHash
     }
 
     class User {
@@ -200,28 +212,33 @@ classDiagram
         -String email
         -String password
         -Set~ObjectId~ roles
+        -String domainId
     }
 
     class Role {
         <<legacy>>
         -String id
         -ERole name
+        -String roleName
     }
 
     class ERole {
         <<enumeration legacy>>
-        ROLE_USER
-        ROLE_MODERATOR
-        ROLE_ADMIN
+        ROLE_BUSINESS_OWNER
+        ROLE_DOMAIN_ADMIN
+        ROLE_APP_ADMIN
+        ROLE_BUSINESS_USER
     }
 
     OwnerAuthController --> OwnerAccountRepository
     OwnerAuthController --> JwtTokenProvider
     DomainAuthController --> DomainUserRepository
-    DomainAuthController --> OrganisationRepository
+    DomainAuthController --> OrganisationLookupPort
     DomainAuthController --> JwtTokenProvider
     AuthController --> UserRepository
     AuthController --> RoleRepository
+    AuthController --> DomainAssignmentService
+    DomainAssignmentService --> OrganisationLookupPort
     AdaptivePrincipalService --> OwnerAccountRepository
     AdaptivePrincipalService --> DomainUserRepository
     OwnerAccountRepository --> OwnerAccount
@@ -240,6 +257,21 @@ classDiagram
 ```mermaid
 classDiagram
     direction TB
+
+    class OrganisationLookupPort {
+        <<interface>>
+        +findBySlug(slug) Optional~Organisation~
+        +findByName(name) Optional~Organisation~
+        +existsByName(name) boolean
+        +createOrganisation(name, ownerUserId) Organisation
+    }
+
+    class OrganisationService {
+        +findBySlug(slug) Optional~Organisation~
+        +findByName(name) Optional~Organisation~
+        +existsByName(name) boolean
+        +createOrganisation(name, ownerUserId) Organisation
+    }
 
     class OrganisationController {
         +POST /custom_form/domain
@@ -277,9 +309,10 @@ classDiagram
         -String id
         -String name
         -String slug
-        -String ownerId
+        -String ownerUserId
         -String description
         -String industry
+        -Map metadata
     }
 
     class DomainGroup {
@@ -300,12 +333,14 @@ classDiagram
     class DomainPermission {
         <<enumeration>>
         DOMAIN_ADMIN
-        MANAGE_USERS
-        MANAGE_GROUPS
-        MANAGE_APPS
-        USE_APP
+        DOMAIN_MANAGE_USERS
+        DOMAIN_MANAGE_GROUPS
+        DOMAIN_MANAGE_APPS
+        DOMAIN_USE_APP
     }
 
+    OrganisationLookupPort <|.. OrganisationService : implements
+    OrganisationService --> OrganisationRepository
     OrganisationController --> OrganisationRepository
     OrganisationController --> DomainProvisioningService
     DomainAccessController --> PermissionService
@@ -332,10 +367,17 @@ classDiagram
 classDiagram
     direction TB
 
+    class ApplicationLookupPort {
+        <<interface>>
+        +findByDomainIdAndSlug(domainId, slug) Optional~Application~
+    }
+
     class ApplicationController {
         +GET /adaptive/domains/slug/apps
         +GET /adaptive/domains/slug/apps/appSlug
         +POST /adaptive/domains/slug/apps
+        +DELETE /adaptive/domains/slug/apps/appSlug
+        +PATCH /adaptive/domains/slug/apps/appSlug
     }
 
     class AppGroupController {
@@ -349,8 +391,12 @@ classDiagram
     }
 
     class ApplicationProvisioningService {
-        +provisionDefaultGroups(app, ownerUserId) void
+        +provisionDefaultGroups(app, ownerUserId, creatorUserId) void
         +assignUser(group, appId, userId, assignedBy) void
+    }
+
+    class ApplicationDeletionService {
+        +deleteApplication(domainId, app) void
     }
 
     class Application {
@@ -378,19 +424,27 @@ classDiagram
 
     class AppPermission {
         <<enumeration>>
-        APP_READ
-        APP_WRITE
-        APP_EXECUTE
+        APP_VIEW
+        APP_CONFIGURE
+        APP_MANAGE_WORKFLOW
+        APP_SUBMIT_DATA
     }
 
+    ApplicationController --> OrganisationLookupPort
     ApplicationController --> ApplicationRepository
     ApplicationController --> PermissionService
     ApplicationController --> ApplicationProvisioningService
+    ApplicationController --> ApplicationDeletionService
     AppGroupController --> AppGroupRepository
     AppGroupController --> AppGroupMemberRepository
     AppGroupController --> PermissionService
     ApplicationProvisioningService --> AppGroupRepository
     ApplicationProvisioningService --> AppGroupMemberRepository
+    ApplicationDeletionService --> ApplicationRepository
+    ApplicationDeletionService --> AppGroupRepository
+    ApplicationDeletionService --> AppGroupMemberRepository
+    ApplicationLookupPort <|.. ApplicationQueryService : implements
+    ApplicationQueryService --> ApplicationRepository
     ApplicationRepository --> Application
     AppGroupRepository --> AppGroup
     AppGroupMemberRepository --> AppGroupMember
@@ -413,6 +467,10 @@ classDiagram
         +POST /adaptive/domains/slug/models?appSlug=
         +PUT /adaptive/domains/slug/models/modelSlug?appSlug=
         +DELETE /adaptive/domains/slug/models/modelSlug?appSlug=
+        +GET /adaptive/domains/slug/models/templates?appSlug=
+        +POST /adaptive/domains/slug/models/from-template?appSlug=
+        +GET /adaptive/domains/slug/models/employees
+        +GET /adaptive/domains/slug/models/employees/records
     }
 
     class CustomFormController {
@@ -425,6 +483,11 @@ classDiagram
         +POST /custom_form/model/create
     }
 
+    class ModelRecordService {
+        +findAllByModelId(modelId) List~ModelRecord~
+        +migrateRecordsForModel(modelId, fields) void
+    }
+
     class DomainModel {
         -String id
         -String domainId
@@ -433,6 +496,21 @@ classDiagram
         -String description
         -boolean sharedWithAllApps
         -List~String~ allowedAppIds
+        -List~DomainModelField~ fields
+        -int version
+    }
+
+    class ModelRecord {
+        -String id
+        -String modelId
+        -String domainId
+        -Map~String,Object~ data
+    }
+
+    class ModelTemplate {
+        -String id
+        -String name
+        -String description
         -List~DomainModelField~ fields
     }
 
@@ -456,14 +534,17 @@ classDiagram
         ARRAY
     }
 
+    DomainModelController --> OrganisationLookupPort
+    DomainModelController --> ApplicationLookupPort
     DomainModelController --> DomainModelRepository
-    DomainModelController --> OrganisationRepository
-    DomainModelController --> ApplicationRepository
+    DomainModelController --> ModelTemplateRepository
+    DomainModelController --> ModelRecordService
     DomainModelController --> PermissionService
-    CustomFormController --> CustomFormRepository
-    CustomFormController --> CustomOptionRepository
-    CustomFormController --> FormFieldRepository
+    CustomFormController --> CustomFormService
+    ModelRecordService --> ModelRecordRepository
     DomainModelRepository --> DomainModel
+    ModelTemplateRepository --> ModelTemplate
+    ModelRecordRepository --> ModelRecord
     DomainModel --> DomainModelField
     DomainModelField --> DomainFieldType
 ```
