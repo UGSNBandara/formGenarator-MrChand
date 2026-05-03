@@ -183,6 +183,10 @@ export class DomainHomeComponent implements OnInit {
         this.branding = b || {};
         this.brandingDraft = { ...this.branding };
 
+        // Cache in ThemeService so ALL components (global-nav, dashboard)
+        // resolve the same server-persisted theme for this domain
+        this.themeService.cacheBranding(this.slug, this.branding);
+
         // Sync theme from server branding (global for ALL users)
         if (this.branding.themeId) {
           this.selectedThemeId = this.branding.themeId;
@@ -214,6 +218,7 @@ export class DomainHomeComponent implements OnInit {
         this.brandingSaving = false;
         this.brandingMessage = 'Settings saved successfully.';
         this.themeService.applyBranding(saved);
+        this.themeService.cacheBranding(this.slug, saved);
 
         // Update the domain object locally so description shows in hero
         if (this.domain) {

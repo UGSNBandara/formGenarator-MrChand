@@ -80,6 +80,7 @@ export class AppHomeComponent implements OnInit {
           this.selectedAppThemeId = b.themeId;
           this.themeColor = this.themeService.getTheme(b.themeId).primary;
         }
+        this.themeService.cacheBranding(this.domainSlug, b);
         this.themeService.applyBranding(b);
       },
       error: () => { /* fallback to defaults */ }

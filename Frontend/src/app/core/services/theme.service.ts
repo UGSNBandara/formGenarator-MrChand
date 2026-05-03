@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable, of, tap } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 export interface AppTheme {
   id: string;
@@ -43,40 +45,59 @@ export const THEMES: AppTheme[] = [
 
 const DEFAULT_THEME = THEMES[0];
 
-const RADIUS_MAP: Record<string, string> = {
-  'rounded': '20px',
-  'sharp': '6px',
-  'pill': '32px',
-};
-
-const DENSITY_MAP: Record<string, string> = {
-  'comfortable': '1.5rem',
-  'compact': '0.85rem',
-};
-
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
 
   /** All available themes */
   readonly themes = THEMES;
 
+  /**
+   * In-memory cache of server-persisted branding per domain slug.
+   * This is the single source of truth — NOT localStorage.
+   */
+  private brandingCache = new Map<string, DomainBranding>();
+
   /** Get a theme by id, or the default */
   getTheme(id: string): AppTheme {
     return THEMES.find(t => t.id === id) ?? DEFAULT_THEME;
   }
 
-  // ── Domain theme ──────────────────────────────────────────────────────────
+  // ── Domain theme (server-driven) ──────────────────────────────────────────
 
+  /**
+   * Cache branding from the server for a given domain slug.
+   * Called by domain-home on load so subsequent lookups are instant.
+   */
+  cacheBranding(slug: string, branding: DomainBranding): void {
+    this.brandingCache.set(slug, branding);
+  }
+
+  /** Get cached branding for a domain, or null if not yet fetched */
+  getCachedBranding(slug: string): DomainBranding | null {
+    return this.brandingCache.get(slug) ?? null;
+  }
+
+  /**
+   * Get the domain theme using the server-cached branding.
+   * Falls back to the default theme if branding hasn't been loaded yet.
+   */
   getDomainThemeId(slug: string): string {
-    return localStorage.getItem(`dt-${slug}`) || DEFAULT_THEME.id;
+    const branding = this.brandingCache.get(slug);
+    return branding?.themeId || DEFAULT_THEME.id;
   }
 
   getDomainTheme(slug: string): AppTheme {
     return this.getTheme(this.getDomainThemeId(slug));
   }
 
+  /**
+   * @deprecated Use cacheBranding() instead — kept for backward compat.
+   * No longer writes to localStorage.
+   */
   setDomainTheme(slug: string, themeId: string): void {
-    localStorage.setItem(`dt-${slug}`, themeId);
+    const existing = this.brandingCache.get(slug) || {};
+    existing.themeId = themeId;
+    this.brandingCache.set(slug, existing);
   }
 
   // ── App theme ─────────────────────────────────────────────────────────────
