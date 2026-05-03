@@ -11,6 +11,7 @@
         <button class="d-mode-tab" [class.active]="mode === 'PREVIEW'" (click)="enterPreviewMode()">Home</button>
         <button class="d-mode-tab" *ngIf="canEditMode"      [class.active]="mode === 'EDIT'"    (click)="enterEditMode()">Manage</button>
         <button class="d-mode-tab" *ngIf="canAccessManager" [class.active]="mode === 'ACCESS'"  (click)="enterAccessManagerMode()">Access</button>
+        <button class="d-mode-tab" *ngIf="canSettings"      [class.active]="mode === 'SETTINGS'" (click)="enterSettingsMode()">Settings</button>
       </div>
       <button class="d-logout-btn" (click)="requestLogout()">Logout</button>
     </div>
@@ -31,9 +32,12 @@
   />
 
   <!-- ── Hero banner ── -->
-  <div class="d-hero" [style.background]="heroBg">
+  <div class="d-hero" [style.background]="heroBg"
+       [class.d-hero--compact]="activeBranding.heroLayout === 'compact'"
+       [class.d-hero--minimal]="activeBranding.heroLayout === 'minimal'">
     <div class="d-hero-inner">
-      <div class="d-hero-chips" *ngIf="domain">
+      <img *ngIf="activeBranding.logoUrl" [src]="activeBranding.logoUrl" class="d-hero-logo" alt="Domain logo" />
+      <div class="d-hero-chips" *ngIf="domain && activeBranding.heroLayout !== 'minimal'">
         <span class="d-slug-chip">{{ domain.slug }}</span>
         <span *ngIf="domain.industry" class="d-industry-chip">{{ domain.industry }}</span>
       </div>
@@ -67,7 +71,7 @@
           <span *ngIf="canEditMode" class="d-empty-hint">Go to <strong>Manage</strong> to create one.</span>
         </div>
 
-        <div class="d-apps-grid" *ngIf="apps.length > 0">
+        <div class="d-apps-grid" [class.d-apps-list]="activeBranding.appCardLayout === 'list'" *ngIf="apps.length > 0">
           <a *ngFor="let app of apps"
              [routerLink]="['/domain', slug, 'app', app.slug]"
              class="d-app-card">
@@ -166,23 +170,7 @@
           </div>
         </div>
 
-        <!-- ── Theme Picker ── -->
-        <div class="d-manage-section mt-4">
-          <h2 class="d-section-title">Domain Theme</h2>
-          <p class="d-muted">Choose a colour theme for this domain's pages.</p>
-          <div class="d-theme-grid mt-2">
-            <button *ngFor="let t of domainThemes"
-                    class="d-theme-swatch"
-                    [class.selected]="selectedThemeId === t.id"
-                    [style.background]="t.primary"
-                    (click)="selectTheme(t.id)"
-                    [title]="t.name">
-              <span class="d-theme-accent-dot" [style.background]="t.accent"></span>
-              <span *ngIf="selectedThemeId === t.id" class="d-theme-check">✓</span>
-            </button>
-          </div>
-          <p class="d-muted" style="font-size:0.78rem;margin-top:0.5rem;">Theme is saved in your browser for this domain.</p>
-        </div>
+
 
       </div>
 
@@ -273,6 +261,158 @@
         </div>
       </div>
 
+      <!-- ── SETTINGS ── -->
+      <div *ngIf="mode === 'SETTINGS' && canSettings">
+        <div class="d-section-head">
+          <h2 class="d-section-title">Domain Settings</h2>
+          <p class="d-muted">Customise your domain's appearance. Changes are visible to all users.</p>
+        </div>
+
+        <div *ngIf="brandingMessage" class="d-alert d-alert-success mt-2">{{ brandingMessage }}</div>
+        <div *ngIf="brandingError" class="d-alert d-alert-error mt-2">{{ brandingError }}</div>
+
+        <div class="d-settings-layout mt-3">
+          <!-- Settings panel -->
+          <div class="d-settings-panel">
+
+            <!-- Identity -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Identity</h3>
+              <p class="d-muted">Domain name and description shown in the hero banner.</p>
+              <div class="d-field mt-2">
+                <label class="d-label">Domain Name</label>
+                <input class="d-input" type="text" [value]="domain?.name || ''" disabled placeholder="Set during creation" />
+              </div>
+              <div class="d-field mt-2">
+                <label class="d-label">Description</label>
+                <input class="d-input" type="text" [(ngModel)]="domainDescription" placeholder="Add a short description for your domain" />
+              </div>
+            </div>
+
+            <!-- Theme -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Theme</h3>
+              <p class="d-muted">Choose a colour palette for this domain.</p>
+              <div class="d-theme-grid mt-2">
+                <button *ngFor="let t of domainThemes"
+                        class="d-theme-swatch"
+                        [class.selected]="(brandingDraft.themeId || selectedThemeId) === t.id"
+                        [style.background]="t.primary"
+                        (click)="selectTheme(t.id)"
+                        [title]="t.name">
+                  <span class="d-theme-accent-dot" [style.background]="t.accent"></span>
+                  <span *ngIf="(brandingDraft.themeId || selectedThemeId) === t.id" class="d-theme-check">✓</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Hero Layout -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Hero Layout</h3>
+              <p class="d-muted">Control the hero banner style on your domain page.</p>
+              <div class="d-option-group mt-2">
+                <button *ngFor="let opt of heroLayoutOptions"
+                        class="d-option-btn"
+                        [class.active]="(brandingDraft.heroLayout || 'default') === opt.value"
+                        (click)="$any(brandingDraft).heroLayout = opt.value">
+                  {{ opt.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Corner Radius -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Corner Radius</h3>
+              <p class="d-muted">Card and button shape style.</p>
+              <div class="d-option-group mt-2">
+                <button *ngFor="let opt of cornerRadiusOptions"
+                        class="d-option-btn"
+                        [class.active]="(brandingDraft.cornerRadius || 'rounded') === opt.value"
+                        (click)="$any(brandingDraft).cornerRadius = opt.value">
+                  {{ opt.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Content Density -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Content Density</h3>
+              <p class="d-muted">Spacing between UI elements.</p>
+              <div class="d-option-group mt-2">
+                <button *ngFor="let opt of densityOptions"
+                        class="d-option-btn"
+                        [class.active]="(brandingDraft.density || 'comfortable') === opt.value"
+                        (click)="$any(brandingDraft).density = opt.value">
+                  {{ opt.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- App Card Layout -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">App Card Layout</h3>
+              <p class="d-muted">How applications appear on the home tab.</p>
+              <div class="d-option-group mt-2">
+                <button *ngFor="let opt of appCardLayoutOptions"
+                        class="d-option-btn"
+                        [class.active]="(brandingDraft.appCardLayout || 'grid') === opt.value"
+                        (click)="$any(brandingDraft).appCardLayout = opt.value">
+                  {{ opt.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Logo URL -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Logo</h3>
+              <p class="d-muted">Paste an image URL to display as the domain logo.</p>
+              <input class="d-input mt-2" type="url" placeholder="https://example.com/logo.png" [(ngModel)]="brandingDraft.logoUrl" />
+              <img *ngIf="brandingDraft.logoUrl" [src]="brandingDraft.logoUrl" class="d-logo-preview mt-2" alt="Logo preview" />
+            </div>
+
+            <!-- Login Message -->
+            <div class="d-settings-card">
+              <h3 class="d-settings-card-title">Login Page Message</h3>
+              <p class="d-muted">Custom welcome message for the login screen.</p>
+              <input class="d-input mt-2" type="text" placeholder="Welcome to our workspace" [(ngModel)]="brandingDraft.loginMessage" />
+            </div>
+
+          </div>
+
+          <!-- Live Preview -->
+          <div class="d-settings-preview">
+            <h3 class="d-settings-card-title">Live Preview</h3>
+            <div class="d-preview-frame">
+              <div class="d-preview-hero" [style.background]="heroBg">
+                <img *ngIf="brandingDraft.logoUrl" [src]="brandingDraft.logoUrl" class="d-preview-logo" alt="" />
+                <div class="d-preview-title">{{ domain?.name || 'Domain Name' }}</div>
+                <div class="d-preview-subtitle">{{ domain?.description || 'Domain description' }}</div>
+              </div>
+              <div class="d-preview-body">
+                <div class="d-preview-card"
+                     [style.border-radius]="brandingDraft.cornerRadius === 'sharp' ? '6px' : brandingDraft.cornerRadius === 'pill' ? '32px' : '14px'">
+                  <div class="d-preview-card-bar" [style.background]="previewTheme.primary"></div>
+                  <div class="d-preview-card-text">Sample App</div>
+                </div>
+                <div class="d-preview-card"
+                     [style.border-radius]="brandingDraft.cornerRadius === 'sharp' ? '6px' : brandingDraft.cornerRadius === 'pill' ? '32px' : '14px'">
+                  <div class="d-preview-card-bar" [style.background]="previewTheme.accent"></div>
+                  <div class="d-preview-card-text">Another App</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save / Reset Actions -->
+        <div class="d-settings-actions mt-3">
+          <button class="d-outline-btn" (click)="resetBranding()">Reset to Default</button>
+          <button class="d-primary-btn" [disabled]="brandingSaving || !brandingHasChanges" (click)="saveBranding()">
+            {{ brandingSaving ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+
     </ng-container>
 
     <!-- ════════ NOT AUTHENTICATED — auth card ════════ -->
@@ -291,7 +431,7 @@
 
           <!-- ── Login ── -->
           <div *ngIf="activeAuthTab === 'login'" class="d-auth-form">
-            <h2 class="d-auth-heading">Welcome back</h2>
+            <h2 class="d-auth-heading">{{ branding.loginMessage || 'Welcome back' }}</h2>
             <p class="d-auth-sub">Sign in to <strong>{{ domain?.name }}</strong></p>
 
             <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">

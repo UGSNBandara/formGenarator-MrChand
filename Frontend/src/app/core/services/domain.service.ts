@@ -242,6 +242,16 @@ export class DomainService {
   createProcessFromTemplate(domainSlug: string, appSlug: string, templateId: string): Observable<any> {
     return this.baseService.post(`${this.adaptive}/domains/${domainSlug}/apps/${appSlug}/process/from-template`, true, { templateId });
   }
+
+  // ── Domain Branding / Customization ──────────────────────────────────────
+
+  getDomainBranding(slug: string): Observable<any> {
+    return this.baseService.get(`${this.adaptive}/domains/${slug}/branding`, false);
+  }
+
+  updateDomainBranding(slug: string, branding: any): Observable<any> {
+    return this.baseService.patch(`${this.adaptive}/domains/${slug}/branding`, true, branding);
+  }
 }
 
 export const _domainService = [

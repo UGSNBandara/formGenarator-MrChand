@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomainService } from '../../../../core/services/domain.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ThemeService, THEMES } from '../../../../core/services/theme.service';
+import { ThemeService, THEMES, DomainBranding } from '../../../../core/services/theme.service';
 import { ModernCardComponent } from '../../../../shared/components/modern-card/modern-card.component';
 import { ModernButtonComponent } from '../../../../shared/components/modern-button/modern-button.component';
 import { ModernInputComponent } from '../../../../shared/components/modern-input/modern-input.component';
@@ -53,7 +53,7 @@ export class DomainHomeComponent implements OnInit {
 
   domainAccess = { permissions: [] as string[], groups: [] as string[] };
 
-  mode: 'PREVIEW' | 'EDIT' | 'ACCESS' = 'PREVIEW';
+  mode: 'PREVIEW' | 'EDIT' | 'ACCESS' | 'SETTINGS' = 'PREVIEW';
   showCreateAppForm = false;
 
   showLogoutConfirm = false;
@@ -63,8 +63,43 @@ export class DomainHomeComponent implements OnInit {
   selectedThemeId = 'midnight';
   activeAuthTab: 'login' | 'register' = 'login';
 
+  // ── Branding / Customization ──────────────────────────────────────────────
+  branding: DomainBranding = {};
+  brandingDraft: DomainBranding = {};
+  brandingSaving = false;
+  brandingMessage = '';
+  brandingError = '';
+  domainDescription = '';
+
+  readonly heroLayoutOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'compact', label: 'Compact' },
+    { value: 'minimal', label: 'Minimal' },
+  ];
+
+  readonly cornerRadiusOptions = [
+    { value: 'rounded', label: 'Rounded' },
+    { value: 'sharp', label: 'Sharp' },
+    { value: 'pill', label: 'Pill' },
+  ];
+
+  readonly densityOptions = [
+    { value: 'comfortable', label: 'Comfortable' },
+    { value: 'compact', label: 'Compact' },
+  ];
+
+  readonly appCardLayoutOptions = [
+    { value: 'grid', label: 'Grid' },
+    { value: 'list', label: 'List' },
+  ];
+
+  /** Returns the draft during SETTINGS mode so the page live-previews; otherwise the saved branding */
+  get activeBranding(): DomainBranding {
+    return this.mode === 'SETTINGS' ? this.brandingDraft : this.branding;
+  }
+
   get currentTheme() {
-    return this.themeService.getTheme(this.selectedThemeId);
+    return this.themeService.getTheme(this.activeBranding.themeId || this.selectedThemeId);
   }
 
   get heroBg(): string {
@@ -72,8 +107,14 @@ export class DomainHomeComponent implements OnInit {
     return `linear-gradient(135deg, ${p} 0%, ${p}dd 100%)`;
   }
 
+  get previewTheme() {
+    const id = this.brandingDraft.themeId || this.selectedThemeId;
+    return this.themeService.getTheme(id);
+  }
+
   selectTheme(id: string): void {
     this.selectedThemeId = id;
+    this.brandingDraft.themeId = id;
     this.themeService.setDomainTheme(this.slug, id);
   }
 
@@ -121,9 +162,13 @@ export class DomainHomeComponent implements OnInit {
   ngOnInit(): void {
     this.slug = this.route.snapshot.params['slug'];
     if (this.slug) {
+      // Always load branding (public endpoint) — works for unauthenticated users too
+      this.loadBranding();
+
       this.domainService.getBySlug(this.slug).subscribe({
         next: (res) => {
           this.domain = res;
+          this.domainDescription = res.description || '';
           this.mode = 'PREVIEW';
           this.showCreateAppForm = false;
           this.loadTheme();
@@ -133,6 +178,79 @@ export class DomainHomeComponent implements OnInit {
       });
     }
   }
+
+  // ── Branding Methods ──────────────────────────────────────────────────────
+
+  private loadBranding(): void {
+    this.domainService.getDomainBranding(this.slug).subscribe({
+      next: (b) => {
+        this.branding = b || {};
+        this.brandingDraft = { ...this.branding };
+
+        // Sync theme from server branding if set
+        if (this.branding.themeId) {
+          this.selectedThemeId = this.branding.themeId;
+          this.themeService.setDomainTheme(this.slug, this.branding.themeId);
+        }
+
+        // Apply branding CSS vars
+        this.themeService.applyBranding(this.branding);
+      },
+      error: () => {
+        // Branding endpoint might not exist yet; use defaults
+        this.branding = {};
+        this.brandingDraft = {};
+      }
+    });
+  }
+
+  saveBranding(): void {
+    this.brandingSaving = true;
+    this.brandingMessage = '';
+    this.brandingError = '';
+
+    // Include description in the branding payload
+    const payload = { ...this.brandingDraft, description: this.domainDescription };
+
+    this.domainService.updateDomainBranding(this.slug, payload).subscribe({
+      next: (saved) => {
+        this.branding = saved;
+        this.brandingDraft = { ...saved };
+        this.brandingSaving = false;
+        this.brandingMessage = 'Settings saved successfully.';
+        this.themeService.applyBranding(saved);
+
+        // Update the domain object locally so description shows in hero
+        if (this.domain) {
+          this.domain.description = this.domainDescription;
+        }
+
+        // Also persist theme choice locally
+        if (saved.themeId) {
+          this.themeService.setDomainTheme(this.slug, saved.themeId);
+          this.selectedThemeId = saved.themeId;
+        }
+
+        setTimeout(() => this.brandingMessage = '', 3000);
+      },
+      error: (err) => {
+        this.brandingSaving = false;
+        this.brandingError = err?.error || 'Failed to save branding.';
+        setTimeout(() => this.brandingError = '', 4000);
+      }
+    });
+  }
+
+  resetBranding(): void {
+    this.brandingDraft = this.themeService.getDefaultBranding();
+    this.selectedThemeId = 'midnight';
+  }
+
+  get brandingHasChanges(): boolean {
+    return JSON.stringify(this.branding) !== JSON.stringify(this.brandingDraft);
+  }
+
+  // ── Access Logic ──────────────────────────────────────────────────────────
 
   private initializeAccess() {
     if (!this.domain) {
@@ -200,6 +318,10 @@ export class DomainHomeComponent implements OnInit {
     return this.isOwnerContext() || this.canManageUsers;
   }
 
+  get canSettings(): boolean {
+    return this.isOwnerContext() || this.hasPermission('DOMAIN_MANAGE');
+  }
+
   enterPreviewMode() {
     this.mode = 'PREVIEW';
     this.showCreateAppForm = false;
@@ -222,6 +344,14 @@ export class DomainHomeComponent implements OnInit {
     this.mode = 'ACCESS';
     this.showCreateAppForm = false;
     this.loadDomainGroups();
+  }
+
+  enterSettingsMode() {
+    if (!this.canSettings) {
+      return;
+    }
+    this.mode = 'SETTINGS';
+    this.brandingDraft = { ...this.branding };
   }
 
   toggleCreateAppForm() {
