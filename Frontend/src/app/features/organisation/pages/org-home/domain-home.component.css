@@ -136,11 +136,39 @@
   line-height: 1.6;
 }
 
-/* ── Body ───────────────────────────────────────────────────────────────────── */
+/* Hero logo */
+.d-hero-logo {
+  max-height: 44px;
+  margin-bottom: 1rem;
+  object-fit: contain;
+}
+
+/* Hero layout: compact */
+.d-hero--compact {
+  padding: 2rem 2rem 1.5rem;
+}
+.d-hero--compact .d-hero-name {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 0.5rem;
+}
+
+/* Hero layout: minimal */
+.d-hero--minimal {
+  padding: 1.5rem 2rem;
+}
+.d-hero--minimal .d-hero-name {
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
+.d-hero--minimal::after {
+  display: none;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────────────────── */
 .d-body {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2.5rem 2rem 4rem;
+  padding: var(--density-padding, 2.5rem) 2rem 4rem;
 }
 
 /* ── Section heads ──────────────────────────────────────────────────────────── */
@@ -160,11 +188,16 @@
   line-height: 1.5;
 }
 
-/* ── Apps grid ──────────────────────────────────────────────────────────────── */
+/* ── Apps grid ────────────────────────────────────────────────────────────────────────── */
 .d-apps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: var(--density-gap, 1rem);
+}
+
+/* App list layout (single column) */
+.d-apps-grid.d-apps-list {
+  grid-template-columns: 1fr;
 }
 
 .d-app-card {

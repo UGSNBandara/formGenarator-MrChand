@@ -124,14 +124,26 @@ export class ThemeService {
       }
     }
 
-    // Corner radius
-    if (branding.cornerRadius && RADIUS_MAP[branding.cornerRadius]) {
-      root.style.setProperty('--radius-card', RADIUS_MAP[branding.cornerRadius]);
+    // Corner radius — set all three levels
+    if (branding.cornerRadius) {
+      const map: Record<string, [string, string, string]> = {
+        'rounded': ['20px', '14px', '10px'],
+        'sharp':   ['6px',  '4px',  '2px'],
+        'pill':    ['32px', '24px', '16px'],
+      };
+      const vals = map[branding.cornerRadius];
+      if (vals) {
+        root.style.setProperty('--radius-card', vals[0]);
+        root.style.setProperty('--radius-card-sm', vals[1]);
+        root.style.setProperty('--radius-card-xs', vals[2]);
+      }
     }
 
-    // Density
-    if (branding.density && DENSITY_MAP[branding.density]) {
-      root.style.setProperty('--density-padding', DENSITY_MAP[branding.density]);
+    // Density — set padding values used by components
+    if (branding.density) {
+      const isCompact = branding.density === 'compact';
+      root.style.setProperty('--density-padding', isCompact ? '0.85rem' : '1.5rem');
+      root.style.setProperty('--density-gap', isCompact ? '0.6rem' : '1.25rem');
     }
   }
 

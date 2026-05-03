@@ -32,14 +32,17 @@
   />
 
   <!-- ── Hero banner ── -->
-  <div class="d-hero" [style.background]="heroBg">
+  <div class="d-hero" [style.background]="heroBg"
+       [class.d-hero--compact]="branding.heroLayout === 'compact'"
+       [class.d-hero--minimal]="branding.heroLayout === 'minimal'">
     <div class="d-hero-inner">
-      <div class="d-hero-chips" *ngIf="domain">
+      <img *ngIf="branding.logoUrl" [src]="branding.logoUrl" class="d-hero-logo" alt="Domain logo" />
+      <div class="d-hero-chips" *ngIf="domain && branding.heroLayout !== 'minimal'">
         <span class="d-slug-chip">{{ domain.slug }}</span>
         <span *ngIf="domain.industry" class="d-industry-chip">{{ domain.industry }}</span>
       </div>
       <h1 class="d-hero-name">{{ domain?.name || '...' }}</h1>
-      <p *ngIf="domain?.description" class="d-hero-desc">{{ domain.description }}</p>
+      <p *ngIf="domain?.description && branding.heroLayout !== 'minimal'" class="d-hero-desc">{{ domain.description }}</p>
     </div>
   </div>
 
@@ -68,7 +71,7 @@
           <span *ngIf="canEditMode" class="d-empty-hint">Go to <strong>Manage</strong> to create one.</span>
         </div>
 
-        <div class="d-apps-grid" *ngIf="apps.length > 0">
+        <div class="d-apps-grid" [class.d-apps-list]="branding.appCardLayout === 'list'" *ngIf="apps.length > 0">
           <a *ngFor="let app of apps"
              [routerLink]="['/domain', slug, 'app', app.slug]"
              class="d-app-card">
